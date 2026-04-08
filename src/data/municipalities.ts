@@ -1,0 +1,199 @@
+import type { Municipality } from '../types';
+
+export const FREDERICK_COUNTY_CENTER: [number, number] = [-77.41, 39.41];
+export const FREDERICK_COUNTY_ZOOM = 10;
+
+export const municipalities: Municipality[] = [
+  {
+    id: 'frederick',
+    name: 'City of Frederick',
+    fips: '2430325',
+    population: 78171,
+    medianIncome: 78846,
+    medianAge: 36.2,
+    area: 22.4,
+    centroid: [-77.4105, 39.4143],
+    description: 'The county seat and largest city, known for its historic downtown, arts district, and thriving restaurant scene.',
+    website: 'https://www.cityoffrederick.com',
+    officials: [
+      { name: 'Michael O\'Connor', title: 'Mayor' },
+      { name: 'Board of Aldermen', title: 'City Legislature' },
+    ],
+  },
+  {
+    id: 'thurmont',
+    name: 'Town of Thurmont',
+    fips: '2478525',
+    population: 6870,
+    medianIncome: 62500,
+    medianAge: 40.1,
+    area: 2.5,
+    centroid: [-77.4108, 39.6237],
+    description: 'Gateway to the Catoctin Mountains and Camp David. Known for the Catoctin Colorfest and outdoor recreation.',
+    website: 'https://www.thurmont.com',
+    officials: [
+      { name: 'John Kinnaird', title: 'Mayor' },
+    ],
+  },
+  {
+    id: 'emmitsburg',
+    name: 'Town of Emmitsburg',
+    fips: '2426300',
+    population: 3205,
+    medianIncome: 54167,
+    medianAge: 33.5,
+    area: 2.1,
+    centroid: [-77.3272, 39.7048],
+    description: 'Home to Mount St. Mary\'s University and the National Shrine of St. Elizabeth Ann Seton.',
+    website: 'https://www.emmitsburgmd.gov',
+    officials: [
+      { name: 'Frank Davis', title: 'Mayor' },
+    ],
+  },
+  {
+    id: 'middletown',
+    name: 'Town of Middletown',
+    fips: '2452625',
+    population: 4520,
+    medianIncome: 98750,
+    medianAge: 38.7,
+    area: 1.9,
+    centroid: [-77.5447, 39.4437],
+    description: 'A historic town in Middletown Valley, surrounded by Civil War battlefields and scenic farmland.',
+    website: 'https://www.middletownmd.gov',
+    officials: [
+      { name: 'John Miller', title: 'Mayor' },
+    ],
+  },
+  {
+    id: 'brunswick',
+    name: 'City of Brunswick',
+    fips: '2410750',
+    population: 6524,
+    medianIncome: 72083,
+    medianAge: 37.8,
+    area: 2.3,
+    centroid: [-77.6278, 39.3142],
+    description: 'A railroad town along the Potomac River and C&O Canal, with a heritage railroad museum.',
+    website: 'https://www.brunswickmd.gov',
+    officials: [
+      { name: 'Nathan Brown', title: 'Mayor' },
+    ],
+  },
+  {
+    id: 'walkersville',
+    name: 'Town of Walkersville',
+    fips: '2482425',
+    population: 6337,
+    medianIncome: 95000,
+    medianAge: 39.2,
+    area: 2.8,
+    centroid: [-77.3508, 39.4862],
+    description: 'A growing residential community northeast of Frederick with excellent schools and community events.',
+    website: 'https://www.walkersville.org',
+    officials: [
+      { name: 'Chad Weddle', title: 'Burgess' },
+    ],
+  },
+  {
+    id: 'myersville',
+    name: 'Town of Myersville',
+    fips: '2455525',
+    population: 1992,
+    medianIncome: 85750,
+    medianAge: 42.1,
+    area: 1.2,
+    centroid: [-77.5667, 39.5053],
+    description: 'A small mountain town west of Frederick, nestled in the Catoctin Mountains along I-70.',
+    website: 'https://www.myersvillemd.gov',
+  },
+  {
+    id: 'woodsboro',
+    name: 'Town of Woodsboro',
+    fips: '2487475',
+    population: 1192,
+    medianIncome: 58750,
+    medianAge: 38.9,
+    area: 0.7,
+    centroid: [-77.3147, 39.5328],
+    description: 'A quiet agricultural town in eastern Frederick County with historic roots dating to 1786.',
+    website: 'https://www.woodsboro.org',
+  },
+  {
+    id: 'new-market',
+    name: 'Town of New Market',
+    fips: '2456012',
+    population: 1834,
+    medianIncome: 108750,
+    medianAge: 41.3,
+    area: 1.4,
+    centroid: [-77.2736, 39.3889],
+    description: 'Known as the "Antiques Capital of Maryland," a charming town with shops along Main Street.',
+    website: 'https://www.townofnewmarket.org',
+  },
+  {
+    id: 'mount-airy',
+    name: 'Town of Mount Airy',
+    fips: '2454100',
+    population: 9810,
+    medianIncome: 112500,
+    medianAge: 39.6,
+    area: 4.1,
+    centroid: [-77.1547, 39.3761],
+    description: 'Straddles the Frederick-Carroll county line. A growing suburban community with strong schools.',
+    website: 'https://www.mountairymd.org',
+  },
+  {
+    id: 'burkittsville',
+    name: 'Town of Burkittsville',
+    fips: '2411325',
+    population: 171,
+    medianIncome: 91250,
+    medianAge: 45.8,
+    area: 0.2,
+    centroid: [-77.6278, 39.3953],
+    description: 'A tiny historic village at the base of South Mountain, site of Civil War battles at Crampton\'s Gap.',
+  },
+  {
+    id: 'rosemont',
+    name: 'Village of Rosemont',
+    fips: '2467625',
+    population: 298,
+    medianIncome: 68750,
+    medianAge: 43.2,
+    area: 0.1,
+    centroid: [-77.4272, 39.4325],
+    description: 'A small incorporated village adjacent to the City of Frederick.',
+  },
+];
+
+// Simplified municipality boundary polygons (approximate)
+// In production these would come from Census TIGER/Line or County GIS
+export const municipalityBoundaries: GeoJSON.FeatureCollection = {
+  type: 'FeatureCollection',
+  features: municipalities.map((m) => ({
+    type: 'Feature' as const,
+    properties: { ...m },
+    geometry: generateApproximateBoundary(m.centroid, m.area),
+  })),
+};
+
+function generateApproximateBoundary(
+  centroid: [number, number],
+  areaSqMiles: number
+): GeoJSON.Polygon {
+  const radiusDeg = Math.sqrt(areaSqMiles) * 0.009;
+  const sides = 24;
+  const coords: [number, number][] = [];
+  for (let i = 0; i <= sides; i++) {
+    const angle = (i / sides) * 2 * Math.PI;
+    const jitterX = 1 + (Math.sin(angle * 3) * 0.15) + (Math.cos(angle * 7) * 0.08);
+    const jitterY = 1 + (Math.cos(angle * 5) * 0.12) + (Math.sin(angle * 4) * 0.1);
+    coords.push([
+      centroid[0] + radiusDeg * Math.cos(angle) * jitterX * 1.3,
+      centroid[1] + radiusDeg * Math.sin(angle) * jitterY,
+    ]);
+  }
+  coords[coords.length - 1] = coords[0];
+  return { type: 'Polygon', coordinates: [coords] };
+}

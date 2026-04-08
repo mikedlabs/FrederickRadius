@@ -1,0 +1,87 @@
+import type { ReactNode } from 'react';
+import { useAppState } from '../../hooks/useAppState';
+import { MunicipalityProfile } from '../municipalities/MunicipalityProfile';
+import { WeatherPanel } from '../data-layers/WeatherPanel';
+import { WaterLevelsPanel } from '../data-layers/WaterLevelsPanel';
+import { MeetingCalendar } from '../civic/MeetingCalendar';
+import { RepresentativesPanel } from '../civic/RepresentativeCard';
+import { RewardsPanel } from '../rewards/RewardsPanel';
+import { ErrorBoundary } from '../shared/ErrorBoundary';
+import type { RewardsState } from '../../types';
+
+const PANEL_TITLES: Record<string, string> = {
+  municipality: 'Municipality',
+  weather: 'Weather',
+  water: 'Water Levels',
+  civic: 'Civic',
+  rewards: 'Rewards',
+  search: 'Search Results',
+};
+
+interface Props {
+  rewards: RewardsState;
+}
+
+export function SlidePanel({ rewards }: Props) {
+  const { state, dispatch } = useAppState();
+
+  if (!state.slidePanelOpen || !state.slidePanelContent) return null;
+
+  const title = PANEL_TITLES[state.slidePanelContent] || 'Details';
+
+  return (
+    <div className="flex h-full w-96 flex-shrink-0 flex-col border-l border-border bg-bg animate-slide-in">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h2 className="text-sm font-semibold text-text">{title}</h2>
+        <button
+          onClick={() => dispatch({ type: 'CLOSE_PANEL' })}
+          className="rounded p-1 text-text-muted hover:bg-bg-hover hover:text-text transition-colors"
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-4">
+        <ErrorBoundary>
+          <PanelContent type={state.slidePanelContent} rewards={rewards} />
+        </ErrorBoundary>
+      </div>
+    </div>
+  );
+}
+
+function PanelContent({ type, rewards }: { type: string; rewards: RewardsState }): ReactNode {
+  switch (type) {
+    case 'municipality':
+      return <MunicipalityProfile />;
+    case 'weather':
+      return <WeatherPanel />;
+    case 'water':
+      return <WaterLevelsPanel />;
+    case 'civic':
+      return <CivicContent />;
+    case 'rewards':
+      return <RewardsPanel rewards={rewards} />;
+    default:
+      return <div className="text-sm text-text-secondary">Select an item to view details</div>;
+  }
+}
+
+function CivicContent() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="mb-3 text-sm font-semibold text-text">Upcoming Meetings</h3>
+        <MeetingCalendar />
+      </div>
+      <div>
+        <h3 className="mb-3 text-sm font-semibold text-text">Your Representatives</h3>
+        <RepresentativesPanel />
+      </div>
+    </div>
+  );
+}
