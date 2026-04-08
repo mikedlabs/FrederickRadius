@@ -137,6 +137,10 @@ export interface AppState {
   slidePanelContent: 'municipality' | 'search' | 'civic' | 'rewards' | 'weather' | 'water' | 'traffic' | 'reports' | 'parking' | 'compare' | 'address-intel' | 'dashboard' | null;
   addressIntel?: { lat: number; lng: number; address: string };
   searchQuery: string;
+  layerOpacity: Record<string, number>;
+  layerOrder: string[];
+  discoverSummary: string | null;
+  layerPanelOpen: boolean;
 }
 
 export type GeoJSONCollection = FeatureCollection;

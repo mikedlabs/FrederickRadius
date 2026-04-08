@@ -4,19 +4,23 @@ import { useGISLayer } from '../../hooks/useGISLayer';
 import type { MapLayer } from '../../types';
 
 export function GISLayerRenderer() {
-  const { layers } = useAppState();
+  const { layers, state } = useAppState();
   const visibleLayers = layers.filter((l) => l.visible);
 
   return (
     <>
       {visibleLayers.map((layer) => (
-        <GISLayer key={layer.id} layer={layer} />
+        <GISLayer
+          key={layer.id}
+          layer={layer}
+          opacity={(state.layerOpacity[layer.id] ?? 100) / 100}
+        />
       ))}
     </>
   );
 }
 
-function GISLayer({ layer }: { layer: MapLayer }) {
+function GISLayer({ layer, opacity }: { layer: MapLayer; opacity: number }) {
   const { data } = useGISLayer(layer.endpoint, true);
   if (!data) return null;
 
@@ -25,7 +29,6 @@ function GISLayer({ layer }: { layer: MapLayer }) {
   if (layer.type === 'point') {
     return (
       <Source id={sourceId} type="geojson" data={data} cluster clusterMaxZoom={14} clusterRadius={50}>
-        {/* Cluster circles */}
         <Layer
           id={`${sourceId}-clusters`}
           type="circle"
@@ -33,12 +36,11 @@ function GISLayer({ layer }: { layer: MapLayer }) {
           paint={{
             'circle-color': layer.color,
             'circle-radius': ['step', ['get', 'point_count'], 15, 10, 20, 50, 25],
-            'circle-opacity': 0.7,
+            'circle-opacity': 0.7 * opacity,
             'circle-stroke-color': '#0A0A0A',
             'circle-stroke-width': 2,
           }}
         />
-        {/* Cluster count labels */}
         <Layer
           id={`${sourceId}-cluster-count`}
           type="symbol"
@@ -48,9 +50,8 @@ function GISLayer({ layer }: { layer: MapLayer }) {
             'text-font': ['DIN Pro Medium', 'Arial Unicode MS Bold'],
             'text-size': 12,
           }}
-          paint={{ 'text-color': '#F0ECE6' }}
+          paint={{ 'text-color': '#F0ECE6', 'text-opacity': opacity }}
         />
-        {/* Individual points */}
         <Layer
           id={`${sourceId}-points`}
           type="circle"
@@ -60,7 +61,7 @@ function GISLayer({ layer }: { layer: MapLayer }) {
             'circle-color': layer.color,
             'circle-stroke-color': '#0A0A0A',
             'circle-stroke-width': 1.5,
-            'circle-opacity': 0.9,
+            'circle-opacity': 0.9 * opacity,
           }}
         />
       </Source>
@@ -73,12 +74,12 @@ function GISLayer({ layer }: { layer: MapLayer }) {
         <Layer
           id={`${sourceId}-fill`}
           type="fill"
-          paint={{ 'fill-color': layer.color, 'fill-opacity': 0.12 }}
+          paint={{ 'fill-color': layer.color, 'fill-opacity': 0.12 * opacity }}
         />
         <Layer
           id={`${sourceId}-outline`}
           type="line"
-          paint={{ 'line-color': layer.color, 'line-width': 1.5, 'line-opacity': 0.5 }}
+          paint={{ 'line-color': layer.color, 'line-width': 1.5, 'line-opacity': 0.5 * opacity }}
         />
       </Source>
     );
@@ -90,7 +91,7 @@ function GISLayer({ layer }: { layer: MapLayer }) {
         <Layer
           id={`${sourceId}-line`}
           type="line"
-          paint={{ 'line-color': layer.color, 'line-width': 2.5, 'line-opacity': 0.8 }}
+          paint={{ 'line-color': layer.color, 'line-width': 2.5, 'line-opacity': 0.8 * opacity }}
         />
       </Source>
     );

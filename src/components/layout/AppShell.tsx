@@ -8,6 +8,7 @@ import { SlidePanel } from './SlidePanel';
 import { BottomSheet, type SnapPoint } from './BottomSheet';
 import { CommandPalette } from '../shared/CommandPalette';
 import { CountyPulse } from '../shared/CountyPulse';
+import { LayerPanel } from '../layers/LayerPanel';
 import { LiveActivityFeed } from '../shared/LiveActivityFeed';
 import { WelcomeScreen } from '../shared/WelcomeScreen';
 import { GuidedTour } from '../shared/GuidedTour';
@@ -226,6 +227,14 @@ export function AppShell() {
             <span>Search</span>
           </div>
           <button
+            onClick={() => dispatch({ type: 'TOGGLE_LAYER_PANEL' })}
+            className={`glass rounded-full px-3 py-1.5 text-[10px] transition-colors ${
+              state.layerPanelOpen ? 'text-accent' : 'text-text-muted hover:text-text'
+            }`}
+          >
+            ◆ Layers
+          </button>
+          <button
             onClick={() => setShowTour(true)}
             className="glass rounded-full px-3 py-1.5 text-[10px] text-text-muted hover:text-text transition-colors"
           >
@@ -233,6 +242,13 @@ export function AppShell() {
           </button>
         </div>
       </div>
+
+      {/* Layer Panel (desktop only) */}
+      <AnimatePresence>
+        {state.layerPanelOpen && !state.slidePanelOpen && (
+          <LayerPanel />
+        )}
+      </AnimatePresence>
 
       {/* Slide Panel (desktop only) */}
       <AnimatePresence>
