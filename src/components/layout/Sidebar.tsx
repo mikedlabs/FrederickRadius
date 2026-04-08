@@ -12,16 +12,24 @@ interface Props {
 export function Sidebar({ onOpenPanel, points }: Props) {
   const { state, dispatch } = useAppState();
 
-  if (!state.sidebarOpen) return null;
-
   return (
     <div className="flex h-full w-80 flex-shrink-0 flex-col border-r border-border bg-bg lg:w-[340px]">
       {/* Header */}
       <div className="flex-shrink-0 border-b border-border p-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold text-text tracking-tight">Frederick Radius</h1>
-            <p className="text-xs text-text-muted">Frederick County, Maryland</p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
+              className="rounded p-1 text-text-muted hover:bg-bg-hover hover:text-text transition-colors lg:hidden"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div>
+              <h1 className="text-lg font-bold text-text tracking-tight">Frederick Radius</h1>
+              <p className="text-xs text-text-muted">Frederick County, Maryland</p>
+            </div>
           </div>
           <button
             onClick={() => onOpenPanel('rewards')}
