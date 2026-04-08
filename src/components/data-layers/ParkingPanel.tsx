@@ -1,7 +1,9 @@
 import { dataManifest } from '../../data/data-manifest';
+import { useMapFlyTo } from '../../hooks/useMapFlyTo';
 
 export function ParkingPanel() {
   const garages = dataManifest.parking.garages;
+  const { flyTo } = useMapFlyTo();
 
   return (
     <div className="space-y-3">
@@ -24,10 +26,7 @@ export function ParkingPanel() {
             <button
               key={garage.name}
               className="w-full rounded-lg border border-border bg-bg-surface p-3 text-left hover:bg-bg-hover transition-colors"
-              onClick={() => {
-                const flyTo = (window as unknown as Record<string, (lng: number, lat: number, zoom?: number) => void>).__mapFlyTo;
-                if (flyTo) flyTo(garage.lng, garage.lat, 17);
-              }}
+              onClick={() => flyTo(garage.lng, garage.lat, 17)}
             >
               <div className="flex items-center justify-between">
                 <div>

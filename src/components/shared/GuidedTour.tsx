@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { municipalities } from '../../data/municipalities';
+import { useMapFlyTo } from '../../hooks/useMapFlyTo';
 
 interface Props {
   onClose: () => void;
@@ -26,12 +27,13 @@ export function GuidedTour({ onClose }: Props) {
 
   const stop = TOUR_STOPS[currentStop];
 
+  const { flyTo: mapFlyTo } = useMapFlyTo();
+
   const flyToStop = useCallback((index: number) => {
     const s = TOUR_STOPS[index];
     if (!s) return;
-    const flyTo = (window as unknown as Record<string, (lng: number, lat: number, zoom?: number) => void>).__mapFlyTo;
-    if (flyTo) flyTo(s.centroid[0], s.centroid[1], s.zoom || 14);
-  }, []);
+    mapFlyTo(s.centroid[0], s.centroid[1], s.zoom || 14);
+  }, [mapFlyTo]);
 
   // Auto-advance
   useEffect(() => {

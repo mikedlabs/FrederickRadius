@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { municipalities } from '../../data/municipalities';
 import { mapLayers, layerCategories } from '../../data/layers';
 import { useAppState } from '../../hooks/useAppState';
+import { useMapFlyTo } from '../../hooks/useMapFlyTo';
 import type { AppState } from '../../types';
 
 interface Command {
@@ -19,6 +20,7 @@ export function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const { dispatch } = useAppState();
+  const { flyTo: mapFlyTo, resetView } = useMapFlyTo();
 
   // Build command list
   const commands = useCallback((): Command[] => {
@@ -78,8 +80,7 @@ export function CommandPalette() {
       icon: '🗻',
       category: 'Actions',
       action: () => {
-        const flyTo = (window as unknown as Record<string, (lng: number, lat: number, zoom?: number) => void>).__mapFlyTo;
-        if (flyTo) flyTo(-77.41, 39.41, 10);
+        mapFlyTo(-77.41, 39.41, 10);
       },
     });
     cmds.push({
@@ -89,14 +90,13 @@ export function CommandPalette() {
       icon: '🔄',
       category: 'Actions',
       action: () => {
-        const flyTo = (window as unknown as Record<string, (lng: number, lat: number, zoom?: number) => void>).__mapFlyTo;
-        if (flyTo) flyTo(-77.41, 39.41, 10);
+        resetView();
         dispatch({ type: 'CLOSE_PANEL' });
       },
     });
 
     return cmds;
-  }, [dispatch]);
+  }, [dispatch, mapFlyTo, resetView]);
 
   // Filter
   const filtered = query.trim()

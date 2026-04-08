@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { fetch311Issues } from '../../services/api/seeclickfix';
 import { fetchTrafficIncidents } from '../../services/api/traffic';
 import { useAppState } from '../../hooks/useAppState';
+import { useMapFlyTo } from '../../hooks/useMapFlyTo';
 
 interface ActivityItem {
   id: string;
@@ -21,6 +22,7 @@ export function LiveActivityFeed() {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { dispatch } = useAppState();
+  const { flyTo: mapFlyTo } = useMapFlyTo();
 
   useEffect(() => {
     async function load() {
@@ -79,8 +81,7 @@ export function LiveActivityFeed() {
 
   function handleItemClick(item: ActivityItem) {
     if (item.lat && item.lng) {
-      const flyTo = (window as unknown as Record<string, (lng: number, lat: number, zoom?: number) => void>).__mapFlyTo;
-      if (flyTo) flyTo(item.lng, item.lat, 15);
+      mapFlyTo(item.lng, item.lat, 15);
     }
     if (item.source === '311') dispatch({ type: 'OPEN_PANEL', content: 'reports' });
     if (item.source === 'Traffic') dispatch({ type: 'OPEN_PANEL', content: 'traffic' });

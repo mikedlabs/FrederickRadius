@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearch } from '../../hooks/useSearch';
 import { useAppState } from '../../hooks/useAppState';
+import { useMapFlyTo } from '../../hooks/useMapFlyTo';
 import { municipalities } from '../../data/municipalities';
 
 export function SearchBar() {
@@ -8,6 +9,7 @@ export function SearchBar() {
   const [showResults, setShowResults] = useState(false);
   const { results, loading, search } = useSearch();
   const { dispatch } = useAppState();
+  const { flyTo: mapFlyTo } = useMapFlyTo();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -37,8 +39,7 @@ export function SearchBar() {
   function handleSelect(lat: string, lon: string, name: string) {
     setShowResults(false);
     setQuery(name.split(',')[0]);
-    const flyTo = (window as unknown as Record<string, (lng: number, lat: number, zoom?: number) => void>).__mapFlyTo;
-    if (flyTo) flyTo(parseFloat(lon), parseFloat(lat), 15);
+    mapFlyTo(parseFloat(lon), parseFloat(lat), 15);
     // Trigger Address Intelligence
     dispatch({
       type: 'ADDRESS_INTEL',
