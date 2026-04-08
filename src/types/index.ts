@@ -70,7 +70,7 @@ export interface MapLayer {
   id: string;
   name: string;
   icon: string;
-  category: 'safety' | 'facilities' | 'schools' | 'parks' | 'environment' | 'transportation' | 'planning' | 'historic' | 'elections' | 'utilities';
+  category: 'safety' | 'facilities' | 'schools' | 'parks' | 'environment' | 'transportation' | 'planning' | 'historic' | 'elections' | 'utilities' | 'everyday' | 'infrastructure';
   visible: boolean;
   color: string;
   endpoint: string;

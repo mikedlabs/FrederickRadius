@@ -88,6 +88,29 @@ export const mapLayers: MapLayer[] = [
   { id: 'city-fiber', name: 'Fiber Optic Lines', icon: '🔌', category: 'utilities', visible: false, color: '#06B6D4', endpoint: `${CITY_BASE}/FiberLines/MapServer/0`, type: 'line' },
   { id: 'lead-service-lines', name: 'Lead Service Lines', icon: '⚠️', category: 'utilities', visible: false, color: '#DC2626', endpoint: `${CITY_BASE}/LeadServiceLines/MapServer/0`, type: 'line' },
   { id: 'recycling', name: 'Recycling Routes', icon: '♻️', category: 'utilities', visible: false, color: '#22C55E', endpoint: `${ARCGIS_BASE}/SolidWasteAndRecycling/Recycle/MapServer/0`, type: 'polygon' },
+  { id: 'stormwater', name: 'Stormwater Facilities', icon: '🌧️', category: 'utilities', visible: false, color: '#38BDF8', endpoint: `${ARCGIS_BASE}/EnergyAndEnvironment/SWMFacilityService/MapServer/0`, type: 'point' },
+  { id: 'ada-ramps', name: 'ADA Sidewalk Ramps', icon: '♿', category: 'utilities', visible: false, color: '#2563EB', endpoint: `${CITY_BASE}/Sidewalks/MapServer/0`, type: 'point' },
+  { id: 'city-streetlights', name: 'City Street Lights', icon: '💡', category: 'utilities', visible: false, color: '#FDE047', endpoint: `${CITY_BASE}/Electrical/MapServer/0`, type: 'point' },
+  { id: 'storm-drains', name: 'Storm Drain Inlets', icon: '🕳️', category: 'utilities', visible: false, color: '#475569', endpoint: `${CITY_BASE}/CartegraphStorm/FeatureServer/2`, type: 'point' },
+
+  // ── EVERYDAY ESSENTIALS ─────────────────────────
+  { id: 'trash-cans', name: 'Trash Cans', icon: '🗑️', category: 'everyday', visible: false, color: '#78716C', endpoint: `${ARCGIS_BASE}/ParksAndRecreation/Assets/MapServer/6`, type: 'point' },
+  { id: 'drinking-fountains', name: 'Drinking Fountains', icon: '🚰', category: 'everyday', visible: false, color: '#06B6D4', endpoint: `${CITY_BASE}/CartegraphWater/FeatureServer/4`, type: 'point' },
+  { id: 'benches', name: 'Park Benches', icon: '🪑', category: 'everyday', visible: false, color: '#92400E', endpoint: `${ARCGIS_BASE}/ParksAndRecreation/Assets/MapServer/1`, type: 'point' },
+  { id: 'picnic-tables', name: 'Picnic Tables & Grills', icon: '🍖', category: 'everyday', visible: false, color: '#B45309', endpoint: `${ARCGIS_BASE}/ParksAndRecreation/Assets/MapServer/6`, type: 'point' },
+  { id: 'playgrounds', name: 'Playground Equipment', icon: '🛝', category: 'everyday', visible: false, color: '#F472B6', endpoint: `${ARCGIS_BASE}/ParksAndRecreation/Assets/MapServer/9`, type: 'point' },
+  { id: 'bike-racks', name: 'Bike Racks & Repair', icon: '🚲', category: 'everyday', visible: false, color: '#10B981', endpoint: `${ARCGIS_BASE}/ParksAndRecreation/Assets/MapServer/6`, type: 'point' },
+  { id: 'portable-toilets', name: 'Portable Toilets', icon: '🚻', category: 'everyday', visible: false, color: '#7C3AED', endpoint: `${ARCGIS_BASE}/ParksAndRecreation/Assets/MapServer/6`, type: 'point' },
+  { id: 'boat-ramps', name: 'Boat & Kayak Ramps', icon: '🛶', category: 'everyday', visible: false, color: '#0EA5E9', endpoint: `${ARCGIS_BASE}/ParksAndRecreation/Assets/MapServer/6`, type: 'point' },
+  { id: 'park-lights', name: 'Park Lighting', icon: '🔦', category: 'everyday', visible: false, color: '#FBBF24', endpoint: `${ARCGIS_BASE}/ParksAndRecreation/Assets/MapServer/5`, type: 'point' },
+
+  // ── INFRASTRUCTURE DETAIL ──────────────────────
+  { id: 'ev-chargers', name: 'EV Charging Stations', icon: '⚡', category: 'infrastructure', visible: false, color: '#22C55E', endpoint: `${ARCGIS_BASE}/DPW/FacilitiesAssets/MapServer/13`, type: 'point' },
+  { id: 'ped-buttons', name: 'Pedestrian Buttons', icon: '🔘', category: 'infrastructure', visible: false, color: '#F59E0B', endpoint: `${ARCGIS_BASE}/DPW/Signals/MapServer/7`, type: 'point' },
+  { id: 'school-beacons', name: 'School Beacons', icon: '🏫', category: 'infrastructure', visible: false, color: '#EF4444', endpoint: `${ARCGIS_BASE}/DPW/Traffic_Signals/MapServer/2`, type: 'point' },
+  { id: 'comm-towers', name: 'Cell/Communication Towers', icon: '📡', category: 'infrastructure', visible: false, color: '#6366F1', endpoint: `${ARCGIS_BASE}/PublicSafety/Towers/MapServer/0`, type: 'point' },
+  { id: 'guardrails', name: 'Guardrails', icon: '🛡️', category: 'infrastructure', visible: false, color: '#94A3B8', endpoint: `${ARCGIS_BASE}/DPW/Guardrail/MapServer/0`, type: 'line' },
+  { id: 'cultural-assets', name: 'Cultural Assets', icon: '🎭', category: 'infrastructure', visible: false, color: '#EC4899', endpoint: `${CITY_BASE}/CulturalAssets/MapServer/0`, type: 'point' },
 ];
 
 export const layerCategories = [
@@ -101,4 +124,6 @@ export const layerCategories = [
   { id: 'historic', name: 'Historic & Cultural', icon: '🏰' },
   { id: 'elections', name: 'Elections', icon: '🗳️' },
   { id: 'utilities', name: 'Utilities & Infrastructure', icon: '🔌' },
+  { id: 'everyday', name: 'Everyday Essentials', icon: '🗑️' },
+  { id: 'infrastructure', name: 'Infrastructure Detail', icon: '⚡' },
 ] as const;
