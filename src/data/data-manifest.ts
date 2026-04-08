@@ -452,6 +452,77 @@ export const dataManifest = {
   },
 
   // ==========================================
+  // EV CHARGING (NREL/AFDC — Free key required)
+  // 121 stations within 20mi, 48 in Frederick city
+  // ==========================================
+  evCharging: {
+    afdc: 'https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude=39.41&longitude=-77.41&radius=20&limit=200',
+    // Free API key: https://developer.nrel.gov/signup/
+    // Returns: station_name, street_address, city, ev_level1_count, ev_level2_count, ev_dc_fast_count, ev_network, access_code
+  },
+
+  // ==========================================
+  // SNAP RETAILERS (No key needed)
+  // 154 retailers in Frederick County
+  // ==========================================
+  snapRetailers: {
+    endpoint: 'https://services1.arcgis.com/RLQu0rK7h4kbsBq5/arcgis/rest/services/snap_retailer_location_data/FeatureServer/0',
+    query: "?where=County='FREDERICK' AND State='MD'&outFields=*&f=geojson&outSR=4326",
+  },
+
+  // ==========================================
+  // PUBLIC RESTROOMS (No key needed)
+  // 37 in Frederick city area
+  // ==========================================
+  restrooms: {
+    refugeRestrooms: 'https://www.refugerestrooms.org/api/v1/restrooms/by_location?lat=39.41&lng=-77.41&per_page=100',
+  },
+
+  // ==========================================
+  // HISTORICAL MARKERS (No key needed)
+  // ==========================================
+  historicalMarkers: {
+    endpoint: 'https://services8.arcgis.com/vDaWif6uZSHGUIuI/arcgis/rest/services/Maryland_Historical_Roadside_Markers/FeatureServer/0',
+    query: "?where=County_or_Parish LIKE '%Frederick%'&outFields=*&f=geojson",
+  },
+
+  // ==========================================
+  // MICRO-INFRASTRUCTURE (County Parks Assets)
+  // 1,599 individual amenity features
+  // ==========================================
+  parkAssets: {
+    base: 'https://fcgis.frederickcountymd.gov/server_pub/rest/services/ParksAndRecreation/Assets/MapServer',
+    amenities: '/6', // 1,599 items: trash cans, fountains, grills, bike racks, etc.
+    benches: '/1',   // 506 benches
+    lights: '/5',    // 644 park lights
+    playgrounds: '/9', // 887 playground equipment pieces
+    structures: '/8',  // shelters, buildings
+    trails: '/12',     // park trails
+    athleticSpaces: '/0',
+  },
+
+  // ==========================================
+  // CITY INFRASTRUCTURE (Cartegraph)
+  // ==========================================
+  cityAssets: {
+    waterFountains: 'https://spires.cityoffrederick.com/arcgis/rest/services/CartegraphWater/FeatureServer/4',
+    hydrants: 'https://spires.cityoffrederick.com/arcgis/rest/services/CartegraphWater/FeatureServer/3',
+    stormInlets: 'https://spires.cityoffrederick.com/arcgis/rest/services/CartegraphStorm/FeatureServer/2',
+    streetLights: 'https://spires.cityoffrederick.com/arcgis/rest/services/Electrical/MapServer/0',
+    adaRamps: 'https://spires.cityoffrederick.com/arcgis/rest/services/Sidewalks/MapServer/0',
+    culturalAssets: 'https://spires.cityoffrederick.com/arcgis/rest/services/CulturalAssets/MapServer/0',
+  },
+
+  // ==========================================
+  // ACCESSIBILITY / ADA (No key needed)
+  // ==========================================
+  accessibility: {
+    adaRamps: 'https://fcgis.frederickcountymd.gov/server_pub/rest/services/DPW/Walkability/MapServer/0', // 35 ramps with pass/fail
+    adaNonCompliant: 'https://fcgis.frederickcountymd.gov/server_pub/rest/services/DPW/Walkability/MapServer/2', // 7,157 non-compliance records
+    trails: 'https://fcgis.frederickcountymd.gov/server_pub/rest/services/DPW/Trails/MapServer/0', // 223 trail segments
+  },
+
+  // ==========================================
   // KEY IDENTIFIERS
   // ==========================================
   identifiers: {
