@@ -134,7 +134,7 @@ export interface AppState {
   activeLayers: string[];
   sidebarOpen: boolean;
   slidePanelOpen: boolean;
-  slidePanelContent: 'municipality' | 'search' | 'civic' | 'rewards' | 'weather' | 'water' | 'traffic' | 'reports' | 'parking' | 'compare' | 'address-intel' | null;
+  slidePanelContent: 'municipality' | 'search' | 'civic' | 'rewards' | 'weather' | 'water' | 'traffic' | 'reports' | 'parking' | 'compare' | 'address-intel' | 'dashboard' | null;
   addressIntel?: { lat: number; lng: number; address: string };
   searchQuery: string;
 }

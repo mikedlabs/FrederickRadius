@@ -5,7 +5,7 @@ import { MapControls } from '../map/MapControls';
 import { SearchBar } from './SearchBar';
 
 interface Props {
-  onOpenPanel: (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare') => void;
+  onOpenPanel: (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => void;
   points: number;
   onStartTour?: () => void;
 }
@@ -55,8 +55,11 @@ export function Sidebar({ onOpenPanel, points, onStartTour }: Props) {
           <QuickAction icon="📢" label="311" onClick={() => onOpenPanel('reports')} />
           <QuickAction icon="🅿️" label="Parking" onClick={() => onOpenPanel('parking')} />
           <QuickAction icon="⚔️" label="Compare" onClick={() => onOpenPanel('compare')} />
+          <QuickAction icon="📊" label="Dashboard" onClick={() => onOpenPanel('dashboard')} />
           <QuickAction icon="⭐" label="Rewards" onClick={() => onOpenPanel('rewards')} />
-          <QuickAction icon="📊" label="Layers" onClick={() => {
+        </div>
+        <div className="mt-1.5 grid grid-cols-1">
+          <QuickAction icon="📑" label="Map Layers" onClick={() => {
             const el = document.getElementById('layer-controls');
             el?.scrollIntoView({ behavior: 'smooth' });
           }} />

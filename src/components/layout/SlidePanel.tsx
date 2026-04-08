@@ -8,6 +8,7 @@ import { WeatherPanel } from '../data-layers/WeatherPanel';
 import { WaterLevelsPanel } from '../data-layers/WaterLevelsPanel';
 import { TrafficPanel } from '../data-layers/TrafficPanel';
 import { ReportsPanel } from '../data-layers/ReportsPanel';
+import { CountyDashboard } from '../data-layers/CountyDashboard';
 import { ParkingPanel } from '../data-layers/ParkingPanel';
 import { MeetingCalendar } from '../civic/MeetingCalendar';
 import { RepresentativesPanel } from '../civic/RepresentativeCard';
@@ -26,6 +27,7 @@ const PANEL_TITLES: Record<string, string> = {
   civic: 'Civic',
   rewards: 'Rewards',
   compare: 'Compare Municipalities',
+  dashboard: 'County Dashboard',
   'address-intel': 'Address Intelligence',
   search: 'Search Results',
 };
@@ -89,6 +91,8 @@ function PanelContent({ type, rewards }: { type: string; rewards: RewardsState }
       return <CivicContent />;
     case 'compare':
       return <MunicipalityCompare />;
+    case 'dashboard':
+      return <CountyDashboard />;
     case 'rewards':
       return <RewardsPanel rewards={rewards} />;
     case 'address-intel':

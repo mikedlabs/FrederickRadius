@@ -28,6 +28,8 @@ import { RewardsPanel } from '../rewards/RewardsPanel';
 import { MunicipalityProfile } from '../municipalities/MunicipalityProfile';
 import { MunicipalityCompare } from '../municipalities/MunicipalityCompare';
 import { AddressIntelligencePanel } from '../shared/AddressIntelligencePanel';
+import { CountyDashboard } from '../data-layers/CountyDashboard';
+import { WhatsHappeningNow } from '../shared/WhatsHappeningNow';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 
 function useIsMobile() {
@@ -52,7 +54,7 @@ export function AppShell() {
   const [confettiTrigger] = useState(false);
   const [bottomSheetSnap, setBottomSheetSnap] = useState<SnapPoint>('peek');
 
-  const handleOpenPanel = (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare') => {
+  const handleOpenPanel = (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => {
     dispatch({ type: 'OPEN_PANEL', content });
     if (isMobile) setBottomSheetSnap('full');
     if (content === 'weather') earnBadge('weather-watcher');
@@ -131,15 +133,30 @@ export function AppShell() {
               </ErrorBoundary>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
+              {/* What's Happening Now — time-aware smart feed */}
+              <WhatsHappeningNow />
+
+              {/* County stats quick access */}
+              <button
+                onClick={() => handleOpenPanel('dashboard' as 'weather')}
+                className="w-full rounded-xl bg-bg-surface border border-border p-3 text-left hover:bg-bg-hover transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-medium text-text">County Dashboard</div>
+                    <div className="text-[10px] text-text-muted">305K residents · 4,500+ businesses · $560M impact</div>
+                  </div>
+                  <span className="text-lg">📊</span>
+                </div>
+              </button>
+
+              {/* Municipalities */}
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Municipalities
                 </h3>
-                <button
-                  onClick={() => handleOpenPanel('compare')}
-                  className="text-[10px] text-accent"
-                >
+                <button onClick={() => handleOpenPanel('compare')} className="text-[10px] text-accent">
                   Compare
                 </button>
               </div>
@@ -246,6 +263,7 @@ function MobilePanelContent({ type, rewards, addressIntel }: {
     case 'reports': return <ReportsPanel />;
     case 'parking': return <ParkingPanel />;
     case 'compare': return <MunicipalityCompare />;
+    case 'dashboard': return <CountyDashboard />;
     case 'rewards': return <RewardsPanel rewards={rewards} />;
     case 'civic': return (
       <div className="space-y-6">
