@@ -9,6 +9,7 @@ import { Live311Overlay } from './overlays/Live311Overlay';
 import { TrafficOverlay } from './overlays/TrafficOverlay';
 import { WaterGaugeOverlay } from './overlays/WaterGaugeOverlay';
 import { ParkingOverlay } from './overlays/ParkingOverlay';
+import { RadiusExplorer } from '../shared/RadiusExplorer';
 import { motion } from 'framer-motion';
 import type { MapMouseEvent } from 'react-map-gl/mapbox';
 
@@ -28,7 +29,12 @@ interface PopupInfo {
   html: string;
 }
 
-export function MapView() {
+interface MapViewProps {
+  radiusCenter?: [number, number] | null;
+  onCloseRadius?: () => void;
+}
+
+export function MapView({ radiusCenter, onCloseRadius }: MapViewProps = {}) {
   const { state, dispatch } = useAppState();
   const [popup, setPopup] = useState<PopupInfo | null>(null);
   const [is3D, setIs3D] = useState(true);
@@ -180,6 +186,11 @@ export function MapView() {
           >
             <div dangerouslySetInnerHTML={{ __html: popup.html }} />
           </Popup>
+        )}
+
+        {/* Radius Explorer overlay */}
+        {radiusCenter && (
+          <RadiusExplorer center={radiusCenter} onClose={() => onCloseRadius?.()} />
         )}
 
         {/* Controls */}

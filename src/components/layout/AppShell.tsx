@@ -30,6 +30,7 @@ import { MunicipalityCompare } from '../municipalities/MunicipalityCompare';
 import { AddressIntelligencePanel } from '../shared/AddressIntelligencePanel';
 import { CountyDashboard } from '../data-layers/CountyDashboard';
 import { WhatsHappeningNow } from '../shared/WhatsHappeningNow';
+import { WidgetStrip } from '../shared/WidgetStrip';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 
 function useIsMobile() {
@@ -53,6 +54,7 @@ export function AppShell() {
   const [showTour, setShowTour] = useState(false);
   const [confettiTrigger] = useState(false);
   const [bottomSheetSnap, setBottomSheetSnap] = useState<SnapPoint>('peek');
+  const [radiusCenter, setRadiusCenter] = useState<[number, number] | null>(null);
 
   const handleOpenPanel = (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => {
     dispatch({ type: 'OPEN_PANEL', content });
@@ -92,9 +94,19 @@ export function AppShell() {
 
         {/* Full-screen Map */}
         <div className="h-full w-full">
-          <MapView />
+          <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
           <CountyPulse />
           {showTour && <GuidedTour onClose={() => setShowTour(false)} />}
+
+          {/* Radius Explorer button */}
+          <button
+            onClick={() => setRadiusCenter(radiusCenter ? null : [-77.4105, 39.4143])}
+            className={`absolute top-14 right-3 z-10 glass rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+              radiusCenter ? 'text-accent' : 'text-text-secondary hover:text-text'
+            }`}
+          >
+            ◎ Radius
+          </button>
         </div>
 
         {/* Bottom Sheet */}
@@ -104,14 +116,7 @@ export function AppShell() {
           peekContent={
             <div className="space-y-2">
               <SearchBar />
-              <div className="grid grid-cols-3 gap-1.5">
-                <QuickBtn icon="🌤️" label="Weather" onClick={() => handleOpenPanel('weather')} />
-                <QuickBtn icon="💧" label="Water" onClick={() => handleOpenPanel('water')} />
-                <QuickBtn icon="🚗" label="Traffic" onClick={() => handleOpenPanel('traffic')} />
-                <QuickBtn icon="🏛️" label="Civic" onClick={() => handleOpenPanel('civic')} />
-                <QuickBtn icon="📢" label="311" onClick={() => handleOpenPanel('reports')} />
-                <QuickBtn icon="🅿️" label="Parking" onClick={() => handleOpenPanel('parking')} />
-              </div>
+              <WidgetStrip />
             </div>
           }
         >
@@ -210,7 +215,7 @@ export function AppShell() {
 
       {/* Map */}
       <div className="relative flex-1 min-w-0">
-        <MapView />
+        <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
         <CountyPulse />
         <LiveActivityFeed />
         {showTour && <GuidedTour onClose={() => setShowTour(false)} />}
@@ -236,18 +241,6 @@ export function AppShell() {
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-function QuickBtn({ icon, label, onClick }: { icon: string; label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex flex-col items-center gap-0.5 rounded-lg p-2 hover:bg-bg-hover transition-colors active:scale-95"
-    >
-      <span className="text-base">{icon}</span>
-      <span className="text-[9px] text-text-muted">{label}</span>
-    </button>
   );
 }
 
