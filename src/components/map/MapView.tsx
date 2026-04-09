@@ -5,6 +5,7 @@ import { useAppState } from '../../hooks/useAppState';
 import { municipalityReferencePoints, municipalities } from '../../data/municipalities';
 import { FREDERICK_COUNTY_CENTER, FREDERICK_COUNTY_ZOOM } from '../../data/municipalities';
 import { GISLayerRenderer } from './GISLayerRenderer';
+import { useMunicipalityBoundaries } from '../../hooks/useMunicipalityBoundaries';
 import { Live311Overlay } from './overlays/Live311Overlay';
 import { TrafficOverlay } from './overlays/TrafficOverlay';
 import { WaterGaugeOverlay } from './overlays/WaterGaugeOverlay';
@@ -43,6 +44,7 @@ export function MapView({ radiusCenter, onCloseRadius }: MapViewProps = {}) {
   const hasMapboxToken = MAPBOX_TOKEN.trim().length > 0;
 
   const muniData = useMemo(() => municipalityReferencePoints, []);
+  const { boundaries: tigerBoundaries } = useMunicipalityBoundaries();
 
   // Municipality click
   const onMuniClick = useCallback(
@@ -124,6 +126,30 @@ export function MapView({ radiusCenter, onCloseRadius }: MapViewProps = {}) {
           tileSize={512}
           maxzoom={14}
         />
+
+        {/* Official municipality boundaries (Census TIGER/Line) */}
+        {tigerBoundaries && (
+          <Source id="tiger-boundaries" type="geojson" data={tigerBoundaries}>
+            <Layer
+              id="tiger-boundary-fill"
+              type="fill"
+              paint={{
+                'fill-color': '#3B82F6',
+                'fill-opacity': 0.06,
+              }}
+            />
+            <Layer
+              id="tiger-boundary-outline"
+              type="line"
+              paint={{
+                'line-color': '#3B82F6',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 12, 2],
+                'line-opacity': 0.5,
+                'line-dasharray': [2, 1],
+              }}
+            />
+          </Source>
+        )}
 
         {/* Municipality reference points */}
         <Source id="municipalities" type="geojson" data={muniData}>
@@ -207,7 +233,9 @@ export function MapView({ radiusCenter, onCloseRadius }: MapViewProps = {}) {
       </Map>
 
       <div className="pointer-events-none absolute left-3 bottom-3 z-10 max-w-xs rounded-lg border border-border/70 bg-bg-elevated/90 px-3 py-2 text-[10px] leading-4 text-text-muted backdrop-blur-md">
-        Municipal map markers are centroid references only. Official municipal boundary geometry is not wired yet.
+        {tigerBoundaries
+          ? 'Municipality boundaries from U.S. Census TIGER/Line. Dots are centroid reference points.'
+          : 'Municipal map markers are centroid references only. Official boundary geometry is loading.'}
       </div>
 
       {(showTrafficOverlay || showWaterOverlay || showReportsOverlay || showParkingOverlay) && (

@@ -6,16 +6,16 @@ export type SnapPoint = 'peek' | 'half' | 'full';
 
 // Heights for each snap point (from bottom of screen)
 const SNAP_HEIGHTS = {
-  peek: 120,   // Just search bar + quick actions
-  half: typeof window !== 'undefined' ? window.innerHeight * 0.5 : 400,
+  peek: 180,   // Search bar + widget strip + explore row
+  half: typeof window !== 'undefined' ? window.innerHeight * 0.55 : 440,
   full: typeof window !== 'undefined' ? window.innerHeight - 44 : 760,
 };
 
 function getSnapHeights() {
   if (typeof window === 'undefined') return SNAP_HEIGHTS;
   return {
-    peek: 120,
-    half: window.innerHeight * 0.5,
+    peek: 180,
+    half: window.innerHeight * 0.55,
     full: window.innerHeight - 44,
   };
 }
@@ -102,7 +102,7 @@ export function BottomSheet({ snap, onSnapChange, peekContent, children }: Props
       {/* Sheet */}
       <motion.div
         ref={sheetRef}
-        className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-2xl bg-bg border-t border-border shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-3xl bg-bg/95 backdrop-blur-xl border-t border-border/50 shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
         style={{ y }}
         animate={{ height: sheetHeight }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -112,8 +112,8 @@ export function BottomSheet({ snap, onSnapChange, peekContent, children }: Props
         onDragEnd={handleDragEnd}
       >
         {/* Handle */}
-        <div className="flex-shrink-0 flex justify-center pt-2 pb-1 cursor-grab active:cursor-grabbing touch-none">
-          <div className="w-10 h-1 rounded-full bg-border" />
+        <div className="flex-shrink-0 flex justify-center pt-2.5 pb-1.5 cursor-grab active:cursor-grabbing touch-none">
+          <div className="w-9 h-[5px] rounded-full bg-black/15" />
         </div>
 
         {/* Peek content (always visible) */}

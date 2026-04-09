@@ -122,9 +122,33 @@ export function AppShell() {
           snap={mobileSheetSnap}
           onSnapChange={setBottomSheetSnap}
           peekContent={
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <SearchBar />
               <WidgetStrip />
+              {/* Quick-access row — always visible in peek */}
+              <div className="overflow-x-auto scrollbar-none -mx-4 px-4">
+                <div className="flex gap-2" style={{ width: 'max-content' }}>
+                  {[
+                    { icon: '🍽️', label: 'Places', panel: 'places' as const },
+                    { icon: '🎭', label: 'Events', panel: 'events' as const },
+                    { icon: '🌤️', label: 'Weather', panel: 'weather' as const },
+                    { icon: '🚗', label: 'Traffic', panel: 'traffic' as const },
+                    { icon: '🏛️', label: 'Civic', panel: 'civic' as const },
+                    { icon: '📢', label: '311', panel: 'reports' as const },
+                    { icon: '🅿️', label: 'Parking', panel: 'parking' as const },
+                    { icon: '📊', label: 'Dashboard', panel: 'dashboard' as const },
+                  ].map((item) => (
+                    <button
+                      key={item.panel}
+                      onClick={() => handleOpenPanel(item.panel)}
+                      className="flex-shrink-0 flex items-center gap-1.5 rounded-full border border-border/60 bg-white/70 px-3 py-2 text-[12px] font-medium text-text active:scale-95 transition-transform"
+                    >
+                      <span>{item.icon}</span>
+                      <span>{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           }
         >
@@ -134,9 +158,9 @@ export function AppShell() {
               {/* Back button */}
               <button
                 onClick={() => { dispatch({ type: 'CLOSE_PANEL' }); setBottomSheetSnap('half'); }}
-                className="flex items-center gap-1.5 text-xs text-accent mb-3 py-1"
+                className="flex items-center gap-1.5 text-sm text-accent mb-4 py-1.5 active:opacity-60"
               >
-                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back
@@ -146,66 +170,100 @@ export function AppShell() {
               </ErrorBoundary>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {/* What's Happening Now — time-aware smart feed */}
               <WhatsHappeningNow />
 
-              {/* Explore Frederick */}
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => handleOpenPanel('places')}
-                  className="rounded-xl bg-bg-surface border border-border p-3 text-left hover:bg-bg-hover transition-colors"
-                >
-                  <span className="text-lg">🍽️</span>
-                  <div className="mt-1 text-sm font-medium text-text">Places</div>
-                  <div className="text-[10px] text-text-muted">Dining, shops, venues</div>
-                </button>
-                <button
-                  onClick={() => handleOpenPanel('events')}
-                  className="rounded-xl bg-bg-surface border border-border p-3 text-left hover:bg-bg-hover transition-colors"
-                >
-                  <span className="text-lg">🎭</span>
-                  <div className="mt-1 text-sm font-medium text-text">Events</div>
-                  <div className="text-[10px] text-text-muted">What's happening</div>
-                </button>
+              {/* Explore Frederick — large touch targets */}
+              <div>
+                <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-text-secondary mb-2.5">
+                  Explore Frederick
+                </h3>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <button
+                    onClick={() => handleOpenPanel('places')}
+                    className="rounded-2xl bg-gradient-to-br from-red-50 to-orange-50 border border-border/50 p-4 text-left active:scale-[0.97] transition-transform"
+                  >
+                    <span className="text-2xl">🍽️</span>
+                    <div className="mt-2 text-[15px] font-semibold text-text">Places</div>
+                    <div className="text-[11px] text-text-muted">Restaurants, shops, nightlife</div>
+                  </button>
+                  <button
+                    onClick={() => handleOpenPanel('events')}
+                    className="rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 border border-border/50 p-4 text-left active:scale-[0.97] transition-transform"
+                  >
+                    <span className="text-2xl">🎭</span>
+                    <div className="mt-2 text-[15px] font-semibold text-text">Events</div>
+                    <div className="text-[11px] text-text-muted">What's happening in Frederick</div>
+                  </button>
+                </div>
               </div>
 
-              {/* County stats quick access */}
+              {/* Live Data — horizontal scroll of data panels */}
+              <div>
+                <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-text-secondary mb-2.5">
+                  Live Data Feeds
+                </h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { icon: '🌤️', label: 'Weather', sub: 'NWS forecast', panel: 'weather' as const },
+                    { icon: '💧', label: 'Water', sub: 'USGS gauges', panel: 'water' as const },
+                    { icon: '🚗', label: 'Traffic', sub: 'CHART live', panel: 'traffic' as const },
+                  ].map((item) => (
+                    <button
+                      key={item.panel}
+                      onClick={() => handleOpenPanel(item.panel)}
+                      className="rounded-2xl bg-bg-surface border border-border/50 p-3 text-center active:scale-[0.97] transition-transform"
+                    >
+                      <span className="text-xl">{item.icon}</span>
+                      <div className="mt-1.5 text-[13px] font-semibold text-text">{item.label}</div>
+                      <div className="text-[10px] text-text-muted">{item.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* County Dashboard */}
               <button
                 onClick={() => handleOpenPanel('dashboard')}
-                className="w-full rounded-xl bg-bg-surface border border-border p-3 text-left hover:bg-bg-hover transition-colors"
+                className="w-full rounded-2xl bg-bg-surface border border-border/50 p-4 text-left active:scale-[0.98] transition-transform"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-text">County Dashboard</div>
-                    <div className="text-[10px] text-text-muted">Source registry, trust notes, and release blockers</div>
+                    <div className="text-[15px] font-semibold text-text">County Dashboard</div>
+                    <div className="text-[11px] text-text-muted">Source registry, trust posture, data coverage</div>
                   </div>
-                  <span className="text-lg">📊</span>
+                  <span className="text-2xl">📊</span>
                 </div>
               </button>
 
               {/* Municipalities */}
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                  Municipalities
-                </h3>
-                <button onClick={() => handleOpenPanel('compare')} className="text-[10px] text-accent">
-                  Compare
-                </button>
+              <div>
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-text-secondary">
+                    Municipalities
+                  </h3>
+                  <button onClick={() => handleOpenPanel('compare')} className="text-[11px] font-medium text-accent">
+                    Compare
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {municipalities.map((m) => (
+                    <MunicipalityCard
+                      key={m.id}
+                      municipality={m}
+                      isSelected={state.selectedMunicipality === m.id}
+                      onSelect={(id) => dispatch({ type: 'SELECT_MUNICIPALITY', id })}
+                    />
+                  ))}
+                </div>
               </div>
-              {municipalities.map((m) => (
-                <MunicipalityCard
-                  key={m.id}
-                  municipality={m}
-                  isSelected={state.selectedMunicipality === m.id}
-                  onSelect={(id) => dispatch({ type: 'SELECT_MUNICIPALITY', id })}
-                />
-              ))}
+
               <button
                 onClick={() => setShowTour(true)}
-                className="w-full rounded-lg bg-gradient-to-r from-accent/10 to-success/10 border border-accent/20 px-3 py-2.5 text-xs font-medium text-accent"
+                className="w-full rounded-2xl bg-gradient-to-r from-accent/10 to-success/10 border border-accent/20 px-4 py-3 text-[13px] font-semibold text-accent active:scale-[0.98] transition-transform"
               >
-                🧭 Take a Tour
+                🧭 Take a Tour of Frederick Radius
               </button>
             </div>
           )}
