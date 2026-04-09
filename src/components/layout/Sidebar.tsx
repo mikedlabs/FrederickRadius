@@ -8,7 +8,7 @@ import { MapControls } from '../map/MapControls';
 import { SearchBar } from './SearchBar';
 
 interface Props {
-  onOpenPanel: (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => void;
+  onOpenPanel: (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard' | 'places' | 'events') => void;
   onStartTour?: () => void;
 }
 
@@ -118,6 +118,35 @@ export function Sidebar({ onOpenPanel, onStartTour }: Props) {
               {mapLayers.length} total
             </span>
           </button>
+        </div>
+
+        {/* Explore Frederick */}
+        <div className="relative border-b border-border/70 px-4 py-4 lg:px-5">
+          <div className="mb-3">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-text-secondary">
+              Explore Frederick
+            </div>
+            <p className="mt-1 text-xs text-text-muted">
+              Discover restaurants, events, shopping, nightlife, and more.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <QuickAction
+              icon="🍽️"
+              label="Places"
+              detail="Dining, shops, venues"
+              tone="from-red-400/18 to-white/0"
+              onClick={() => onOpenPanel('places')}
+            />
+            <QuickAction
+              icon="🎭"
+              label="Events"
+              detail="What's happening"
+              tone="from-amber-400/18 to-white/0"
+              onClick={() => onOpenPanel('events')}
+            />
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-5">

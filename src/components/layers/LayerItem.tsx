@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import { useAppState } from '../../hooks/useAppState';
+import { useLayerHealth } from '../../hooks/useLayerHealth';
+import { resetLayerError } from '../../hooks/useLayerHealth';
 import type { MapLayer } from '../../types';
 import { getSourceMetadata } from '../../data/source-registry';
 import { DataTrustBadge } from '../shared/DataTrustBadge';
+import { formatTimeAgo } from '../../lib/time';
 
 interface Props {
   layer: MapLayer;
@@ -12,6 +15,10 @@ interface Props {
 export function LayerItem({ layer, opacity }: Props) {
   const { dispatch } = useAppState();
   const source = getSourceMetadata(layer.sourceId);
+  const health = useLayerHealth(layer.id);
+
+  const isError = health.status === 'error';
+  const isLoading = health.status === 'loading';
 
   return (
     <motion.div
@@ -19,16 +26,22 @@ export function LayerItem({ layer, opacity }: Props) {
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 10 }}
-      className="flex items-center gap-2 rounded-lg bg-bg-surface border border-border px-2.5 py-2 group"
+      className={`flex items-center gap-2 rounded-lg bg-bg-surface border px-2.5 py-2 group ${
+        isError ? 'border-danger/40' : 'border-border'
+      }`}
     >
       {/* Drag handle */}
       <span className="text-text-muted cursor-grab active:cursor-grabbing text-xs select-none">≡</span>
 
-      {/* Color dot */}
-      <span
-        className="h-2.5 w-2.5 rounded-full flex-shrink-0"
-        style={{ backgroundColor: layer.color }}
-      />
+      {/* Color dot / status */}
+      {isLoading ? (
+        <span className="h-2.5 w-2.5 flex-shrink-0 animate-spin rounded-full border border-border border-t-accent" />
+      ) : (
+        <span
+          className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${isError ? 'bg-danger' : ''}`}
+          style={isError ? undefined : { backgroundColor: layer.color }}
+        />
+      )}
 
       <div className="min-w-0 flex-1">
         <div className="truncate text-xs text-text">
@@ -40,9 +53,29 @@ export function LayerItem({ layer, opacity }: Props) {
             {source?.name ?? layer.sourceId}
           </span>
         </div>
-        <div className="mt-1 line-clamp-2 text-[10px] leading-4 text-text-muted">
-          {layer.notes ?? layer.summary}
-        </div>
+
+        {isError ? (
+          <div className="mt-1 flex items-center gap-1.5">
+            <span className="text-[10px] leading-4 text-danger">Failed to load</span>
+            <button
+              onClick={(e) => { e.stopPropagation(); resetLayerError(layer.id); }}
+              className="text-[10px] font-medium text-accent hover:underline"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="mt-1 line-clamp-2 text-[10px] leading-4 text-text-muted">
+              {layer.notes ?? layer.summary}
+            </div>
+            {health.fetchedAt && (
+              <div className="mt-0.5 text-[9px] text-text-muted">
+                Fetched {formatTimeAgo(health.fetchedAt)}
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Opacity slider */}

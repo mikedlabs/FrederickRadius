@@ -15,6 +15,8 @@ import { RepresentativesPanel } from '../civic/RepresentativeCard';
 import { RewardsPanel } from '../rewards/RewardsPanel';
 import { AddressIntelligencePanel } from '../shared/AddressIntelligencePanel';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
+import { PlacesPanel } from '../discover/PlacesPanel';
+import { EventsPanel } from '../discover/EventsPanel';
 import type { RewardsState } from '../../types';
 import { productFeatures } from '../../config/features';
 
@@ -68,6 +70,16 @@ const PANEL_DETAILS: Record<string, { kicker: string; title: string; note: strin
     kicker: 'Source intelligence',
     title: 'County Dashboard',
     note: 'A release-facing view of data posture, trust notes, and the product’s current limits.',
+  },
+  places: {
+    kicker: 'Local discovery',
+    title: 'Places',
+    note: 'Restaurants, shops, venues, and services from OpenStreetMap. Review links search external platforms.',
+  },
+  events: {
+    kicker: 'Local discovery',
+    title: 'Events & Things to Do',
+    note: 'Curated Frederick events and venues. Check event websites for current schedules.',
   },
   'address-intel': {
     kicker: 'Location context',
@@ -159,6 +171,10 @@ function PanelContent({ type, rewards }: { type: string; rewards: RewardsState }
       return <MunicipalityCompare />;
     case 'dashboard':
       return <CountyDashboard />;
+    case 'places':
+      return <PlacesPanel />;
+    case 'events':
+      return <EventsPanel />;
     case 'rewards':
       return productFeatures.experimentalExploration
         ? <RewardsPanel rewards={rewards} />

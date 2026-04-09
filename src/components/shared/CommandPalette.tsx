@@ -42,12 +42,15 @@ export function CommandPalette() {
 
     // Panels
     const panels: Array<{ content: AppState['slidePanelContent']; label: string; icon: string; desc: string }> = [
+      { content: 'places', label: 'Explore Places', icon: '🍽️', desc: 'Restaurants, shops, venues, and services' },
+      { content: 'events', label: 'Events & Things to Do', icon: '🎭', desc: 'What\'s happening in Frederick' },
       { content: 'weather', label: 'Weather Forecast', icon: '🌤️', desc: 'NWS 7-day forecast and alerts' },
       { content: 'water', label: 'Stream Gauges', icon: '💧', desc: '9 USGS water level monitors' },
       { content: 'traffic', label: 'Traffic Incidents', icon: '🚗', desc: 'Live Maryland CHART data' },
       { content: 'reports', label: '311 Service Requests', icon: '📢', desc: 'SeeClickFix open issues' },
       { content: 'parking', label: 'Parking', icon: '🅿️', desc: 'ParkMobile zones and garages' },
       { content: 'civic', label: 'Civic Directory', icon: '🏛️', desc: 'Manual snapshot of meetings and representatives' },
+      { content: 'dashboard', label: 'County Dashboard', icon: '📊', desc: 'Source registry and trust posture' },
     ];
     if (productFeatures.experimentalExploration) {
       panels.push({ content: 'rewards', label: 'Rewards & Badges', icon: '⭐', desc: 'Experimental civic engagement score' });
@@ -90,6 +93,34 @@ export function CommandPalette() {
         icon: layer.icon,
         category: 'Map Layers',
         action: () => dispatch({ type: 'TOGGLE_LAYER', layerId: layer.id }),
+      });
+    }
+
+    // Scenario presets — answer "what am I trying to do?"
+    const scenarios: Array<{ id: string; label: string; icon: string; desc: string; panel: AppState['slidePanelContent']; layers?: string[] }> = [
+      { id: 'night-out', label: 'Plan a Night Out', icon: '🌙', desc: 'Restaurants, bars, events, and parking', panel: 'places', layers: ['liquor'] },
+      { id: 'new-resident', label: "I'm New to Frederick", icon: '🏠', desc: 'Schools, parks, civic info, groceries', panel: 'events', layers: ['schools', 'parks', 'libraries'] },
+      { id: 'storm-prep', label: 'Storm & Flood Check', icon: '⛈️', desc: 'Weather alerts, water levels, flood zones', panel: 'weather', layers: ['fema-floodplain', 'flood-points', 'high-water'] },
+      { id: 'weekend-explore', label: 'Weekend Explorer', icon: '🗺️', desc: 'Trails, historic sites, events, markets', panel: 'events', layers: ['trails', 'historic-sites', 'park-boundaries'] },
+      { id: 'commute-check', label: 'Commute & Traffic', icon: '🚗', desc: 'Traffic incidents, transit, road closures', panel: 'traffic', layers: ['transit-routes', 'transit-stops', 'road-closures'] },
+      { id: 'civic-engaged', label: 'Get Civically Engaged', icon: '🏛️', desc: 'Meetings, representatives, elections', panel: 'civic', layers: ['election-precincts', 'polling-places'] },
+    ];
+
+    for (const s of scenarios) {
+      cmds.push({
+        id: `scenario-${s.id}`,
+        label: s.label,
+        description: s.desc,
+        icon: s.icon,
+        category: 'Quick Start Scenarios',
+        action: () => {
+          if (s.layers) {
+            for (const layerId of s.layers) {
+              dispatch({ type: 'TOGGLE_LAYER', layerId });
+            }
+          }
+          dispatch({ type: 'OPEN_PANEL', content: s.panel });
+        },
       });
     }
 
@@ -202,7 +233,7 @@ export function CommandPalette() {
               setQuery(e.target.value);
               setSelectedIndex(0);
             }}
-            placeholder="Search civic views, municipalities, layers, data, actions..."
+            placeholder="Search places, events, layers, civic info, or try a scenario..."
             className="flex-1 bg-transparent text-base text-text placeholder-text-muted outline-none"
           />
           <kbd className="hidden sm:inline-flex items-center gap-1 rounded bg-bg-surface border border-border px-1.5 py-0.5 text-[10px] text-text-muted">

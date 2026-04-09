@@ -21,7 +21,7 @@ export function GISLayerRenderer() {
 }
 
 function GISLayer({ layer, opacity }: { layer: MapLayer; opacity: number }) {
-  const { data } = useGISLayer(layer.endpoint, true);
+  const { data } = useGISLayer(layer.id, layer.endpoint, true);
   if (!data) return null;
 
   const sourceId = `gis-${layer.id}`;

@@ -32,6 +32,9 @@ import { CountyDashboard } from '../data-layers/CountyDashboard';
 import { WhatsHappeningNow } from '../shared/WhatsHappeningNow';
 import { WidgetStrip } from '../shared/WidgetStrip';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
+import { LayerHealthBanner } from '../layers/LayerHealthBanner';
+import { PlacesPanel } from '../discover/PlacesPanel';
+import { EventsPanel } from '../discover/EventsPanel';
 import { productFeatures } from '../../config/features';
 
 function useIsMobile() {
@@ -57,7 +60,7 @@ export function AppShell() {
   const [bottomSheetSnap, setBottomSheetSnap] = useState<SnapPoint>('peek');
   const [radiusCenter, setRadiusCenter] = useState<[number, number] | null>(null);
 
-  const handleOpenPanel = (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => {
+  const handleOpenPanel = (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard' | 'places' | 'events') => {
     dispatch({ type: 'OPEN_PANEL', content });
     if (isMobile) setBottomSheetSnap('full');
     if (productFeatures.experimentalExploration) {
@@ -99,6 +102,7 @@ export function AppShell() {
         {/* Full-screen Map */}
         <div className="h-full w-full">
           <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
+          <LayerHealthBanner />
           <CountyPulse />
           {showTour && <GuidedTour onClose={() => setShowTour(false)} />}
 
@@ -145,6 +149,26 @@ export function AppShell() {
             <div className="space-y-4">
               {/* What's Happening Now — time-aware smart feed */}
               <WhatsHappeningNow />
+
+              {/* Explore Frederick */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => handleOpenPanel('places')}
+                  className="rounded-xl bg-bg-surface border border-border p-3 text-left hover:bg-bg-hover transition-colors"
+                >
+                  <span className="text-lg">🍽️</span>
+                  <div className="mt-1 text-sm font-medium text-text">Places</div>
+                  <div className="text-[10px] text-text-muted">Dining, shops, venues</div>
+                </button>
+                <button
+                  onClick={() => handleOpenPanel('events')}
+                  className="rounded-xl bg-bg-surface border border-border p-3 text-left hover:bg-bg-hover transition-colors"
+                >
+                  <span className="text-lg">🎭</span>
+                  <div className="mt-1 text-sm font-medium text-text">Events</div>
+                  <div className="text-[10px] text-text-muted">What's happening</div>
+                </button>
+              </div>
 
               {/* County stats quick access */}
               <button
@@ -218,6 +242,7 @@ export function AppShell() {
       {/* Map */}
       <div className="relative flex-1 min-w-0">
         <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
+        <LayerHealthBanner />
         <CountyPulse />
         <LiveActivityFeed />
         {showTour && <GuidedTour onClose={() => setShowTour(false)} />}
@@ -274,6 +299,8 @@ function MobilePanelContent({ type, rewards, addressIntel }: {
     case 'parking': return <ParkingPanel />;
     case 'compare': return <MunicipalityCompare />;
     case 'dashboard': return <CountyDashboard />;
+    case 'places': return <PlacesPanel />;
+    case 'events': return <EventsPanel />;
     case 'rewards': return productFeatures.experimentalExploration
       ? <RewardsPanel rewards={rewards} />
       : <ExperimentalFeatureNotice />;
