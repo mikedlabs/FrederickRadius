@@ -9,19 +9,19 @@ interface Props {
 const trustCards = [
   {
     title: 'Official feeds first',
-    body: 'Weather, water, traffic, and county GIS layers should be treated differently from community reports and manual snapshots.',
+    body: 'Weather, water, traffic, and county GIS layers should look and behave differently from community reports or manual snapshots.',
   },
   {
     title: 'Guided civic views',
-    body: 'Start from curated local questions like flood readiness, planning context, or civic services before dropping into the raw layer catalog.',
+    body: 'Start from real local questions like flood readiness, planning context, or civic services before browsing the raw catalog.',
   },
   {
     title: 'Uncertainty stays visible',
-    body: 'If Frederick Radius only has a manual snapshot or an approximate lookup, the interface should say so directly.',
+    body: 'If Frederick Radius only has a manual snapshot or approximate lookup, the interface should state that directly.',
   },
   {
-    title: 'Serious before flashy',
-    body: 'The goal is civic utility and local context, not novelty mechanics or inflated county marketing claims.',
+    title: 'Utility over hype',
+    body: 'The product should feel like a serious county atlas rather than a novelty civic dashboard.',
   },
 ];
 
@@ -30,48 +30,80 @@ export function WelcomeScreen({ onComplete }: Props) {
   const officialCount = Object.values(sourceRegistry).filter((source) => source.official).length;
 
   return (
-    <div className="fixed inset-0 z-[200] overflow-hidden bg-bg text-text">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.14),_transparent_40%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(160deg,_rgba(7,17,28,0.9),_rgba(8,14,24,1))]" />
+    <div className="fixed inset-0 z-[200] overflow-hidden text-text">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_20%,rgba(12,101,126,0.2),transparent_28%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_84%_16%,rgba(177,129,41,0.16),transparent_24%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,244,235,0.98),rgba(235,223,205,0.96))]" />
 
-      <div className="relative mx-auto flex min-h-full max-w-5xl flex-col justify-center px-6 py-10">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-surface px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-text-secondary">
-            Civic Intelligence Preview
-          </div>
-          <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-5xl">
-            Frederick Radius
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-text-secondary">
-            A trust-first civic and place context product for Frederick County and the City of Frederick. The strongest sources are official feeds and GIS catalogs. The weakest areas are still clearly labeled manual or approximate.
-          </p>
-        </div>
+      <div className="relative mx-auto flex min-h-full max-w-7xl items-center px-6 py-8">
+        <div className="grid w-full gap-5 lg:grid-cols-[1.08fr_0.92fr]">
+          <section className="panel-surface-strong topographic-lines flex flex-col justify-between rounded-[40px] p-7 md:p-10">
+            <div>
+              <div className="eyebrow">Civic intelligence preview</div>
+              <h1 className="font-display mt-6 max-w-4xl text-5xl leading-[0.9] tracking-tight md:text-7xl">
+                Frederick Radius is designed as a local atlas, not a generic map app.
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-8 text-text-secondary md:text-lg">
+                A trust-first civic and place context product for Frederick County and the City of Frederick. The strongest sources are official feeds and GIS catalogs. The weaker areas remain visibly labeled as manual or approximate.
+              </p>
 
-        <div className="mt-8 grid gap-3 md:grid-cols-3">
-          <MetricCard label="Sources in registry" value={String(sourceCount)} detail="Documented in code with authority, cadence, and risk notes" />
-          <MetricCard label="Official sources" value={String(officialCount)} detail="Government-published feeds or catalogs" />
-          <MetricCard label="Configured layers" value={String(mapLayers.length)} detail={`${municipalities.length} municipality profiles with manual snapshot notes`} />
-        </div>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {trustCards.map((card) => (
-            <div key={card.title} className="rounded-2xl border border-border bg-bg-surface p-5">
-              <div className="text-sm font-semibold text-text">{card.title}</div>
-              <div className="mt-2 text-sm leading-6 text-text-secondary">{card.body}</div>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={onComplete}
+                  className="rounded-full bg-text px-6 py-3 text-sm font-semibold text-bg-elevated transition-transform hover:-translate-y-0.5"
+                >
+                  Open Frederick Radius
+                </button>
+                <div className="rounded-full border border-border/70 bg-white/60 px-4 py-3 text-xs text-text-secondary">
+                  Press Enter to continue
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          <button
-            onClick={onComplete}
-            className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition-transform hover:-translate-y-0.5"
-          >
-            Open Frederick Radius
-          </button>
-          <div className="text-xs text-text-muted">
-            Map interactions require a Mapbox token. The rest of the product remains usable without one.
-          </div>
+            <div className="mt-10 grid gap-3 md:grid-cols-3">
+              <MetricCard
+                label="Sources in registry"
+                value={String(sourceCount)}
+                detail="Documented with authority, cadence, and risk notes"
+              />
+              <MetricCard
+                label="Official sources"
+                value={String(officialCount)}
+                detail="Government-published feeds or catalogs"
+              />
+              <MetricCard
+                label="Configured layers"
+                value={String(mapLayers.length)}
+                detail={`${municipalities.length} municipality profiles with manual snapshot notes`}
+              />
+            </div>
+          </section>
+
+          <section className="grid gap-4">
+            <div className="panel-surface rounded-[34px] p-6">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-text-secondary">
+                Operating standard
+              </div>
+              <h2 className="font-display mt-3 text-3xl leading-none text-text">
+                Designed to show confidence and limits at the same time.
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-text-secondary">
+                The goal is to make strong local data feel usable without pretending the weak parts are stronger than they are.
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
+              {trustCards.map((card) => (
+                <div key={card.title} className="panel-surface rounded-[30px] p-6">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-text-secondary">
+                    Product principle
+                  </div>
+                  <div className="mt-3 text-xl font-semibold text-text">{card.title}</div>
+                  <div className="mt-2 text-sm leading-7 text-text-secondary">{card.body}</div>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
     </div>
@@ -80,10 +112,10 @@ export function WelcomeScreen({ onComplete }: Props) {
 
 function MetricCard({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-bg-surface p-4">
-      <div className="text-[11px] uppercase tracking-[0.18em] text-text-muted">{label}</div>
-      <div className="mt-2 text-3xl font-semibold text-text">{value}</div>
-      <div className="mt-2 text-xs leading-5 text-text-secondary">{detail}</div>
+    <div className="rounded-[28px] border border-border/70 bg-white/60 p-5">
+      <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-text-secondary">{label}</div>
+      <div className="mt-3 text-4xl font-semibold tracking-tight text-text">{value}</div>
+      <div className="mt-2 text-xs leading-6 text-text-secondary">{detail}</div>
     </div>
   );
 }
