@@ -13,8 +13,7 @@ import { LiveActivityFeed } from '../shared/LiveActivityFeed';
 import { WelcomeScreen } from '../shared/WelcomeScreen';
 import { GuidedTour } from '../shared/GuidedTour';
 import { SearchBar } from './SearchBar';
-import { MunicipalityCard } from '../municipalities/MunicipalityCard';
-import { municipalities } from '../../data/municipalities';
+import { HomeFeed } from '../home/HomeFeed';
 
 // Mobile panel content (rendered inside BottomSheet)
 import { WeatherPanel } from '../data-layers/WeatherPanel';
@@ -29,7 +28,6 @@ import { MunicipalityProfile } from '../municipalities/MunicipalityProfile';
 import { MunicipalityCompare } from '../municipalities/MunicipalityCompare';
 import { AddressIntelligencePanel } from '../shared/AddressIntelligencePanel';
 import { CountyDashboard } from '../data-layers/CountyDashboard';
-import { WidgetStrip } from '../shared/WidgetStrip';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import { LayerHealthBanner } from '../layers/LayerHealthBanner';
 import { PlacesPanel } from '../discover/PlacesPanel';
@@ -102,59 +100,20 @@ export function AppShell() {
         <div className="h-full w-full">
           <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
           <LayerHealthBanner />
-          <CountyPulse />
           {showTour && <GuidedTour onClose={() => setShowTour(false)} />}
-
-          {/* Radius Explorer button */}
-          <button
-            onClick={() => setRadiusCenter(radiusCenter ? null : [-77.4105, 39.4143])}
-            className={`absolute top-14 right-3 z-10 glass rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
-              radiusCenter ? 'text-accent' : 'text-text-secondary hover:text-text'
-            }`}
-          >
-            ◎ Radius
-          </button>
         </div>
 
         {/* Bottom Sheet */}
         <BottomSheet
           snap={mobileSheetSnap}
           onSnapChange={setBottomSheetSnap}
-          peekContent={
-            <div className="space-y-2">
-              <SearchBar />
-              {/* Quick-access row */}
-              <div className="overflow-x-auto scrollbar-none -mx-4 px-4">
-                <div className="flex gap-1.5" style={{ width: 'max-content' }}>
-                  {[
-                    { icon: '🍽️', label: 'Places', panel: 'places' as const },
-                    { icon: '🎭', label: 'Events', panel: 'events' as const },
-                    { icon: '🌤️', label: 'Weather', panel: 'weather' as const },
-                    { icon: '🚗', label: 'Traffic', panel: 'traffic' as const },
-                    { icon: '🏛️', label: 'Civic', panel: 'civic' as const },
-                    { icon: '📢', label: '311', panel: 'reports' as const },
-                    { icon: '🅿️', label: 'Parking', panel: 'parking' as const },
-                  ].map((item) => (
-                    <button
-                      key={item.panel}
-                      onClick={() => handleOpenPanel(item.panel)}
-                      className="flex-shrink-0 rounded-full bg-black/[0.05] px-3 py-1.5 text-[13px] font-medium text-text active:bg-black/[0.1] transition-colors"
-                    >
-                      {item.icon} {item.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          }
+          peekContent={<SearchBar />}
         >
-          {/* Sheet scrollable content */}
           {state.slidePanelContent ? (
             <div>
-              {/* Back button */}
               <button
                 onClick={() => { dispatch({ type: 'CLOSE_PANEL' }); setBottomSheetSnap('half'); }}
-                className="flex items-center gap-1.5 text-sm text-accent mb-4 py-1.5 active:opacity-60"
+                className="flex items-center gap-1.5 text-[14px] font-medium text-accent mb-3 py-1 active:opacity-60"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -166,90 +125,11 @@ export function AppShell() {
               </ErrorBoundary>
             </div>
           ) : (
-            <div className="space-y-4">
-              <WidgetStrip />
-
-              {/* Explore */}
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => handleOpenPanel('places')}
-                  className="flex items-center gap-3 rounded-2xl bg-white/60 p-3.5 text-left active:bg-white/80 transition-colors"
-                >
-                  <span className="text-2xl">🍽️</span>
-                  <div>
-                    <div className="text-[14px] font-semibold text-text">Places</div>
-                    <div className="text-[11px] text-text-muted">Food, shops, nightlife</div>
-                  </div>
-                </button>
-                <button
-                  onClick={() => handleOpenPanel('events')}
-                  className="flex items-center gap-3 rounded-2xl bg-white/60 p-3.5 text-left active:bg-white/80 transition-colors"
-                >
-                  <span className="text-2xl">🎭</span>
-                  <div>
-                    <div className="text-[14px] font-semibold text-text">Events</div>
-                    <div className="text-[11px] text-text-muted">What's on</div>
-                  </div>
-                </button>
-              </div>
-
-              {/* Live feeds + civic */}
-              <div className="grid grid-cols-3 gap-1.5">
-                {[
-                  { icon: '💧', label: 'Water', panel: 'water' as const },
-                  { icon: '📢', label: '311', panel: 'reports' as const },
-                  { icon: '🅿️', label: 'Parking', panel: 'parking' as const },
-                ].map((item) => (
-                  <button
-                    key={item.panel}
-                    onClick={() => handleOpenPanel(item.panel)}
-                    className="rounded-xl bg-white/50 py-2.5 text-center active:bg-white/70 transition-colors"
-                  >
-                    <span className="text-lg">{item.icon}</span>
-                    <div className="mt-0.5 text-[12px] font-medium text-text">{item.label}</div>
-                  </button>
-                ))}
-              </div>
-
-              {/* Municipalities */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-[12px] font-semibold text-text-secondary">
-                    Municipalities
-                  </h3>
-                  <button onClick={() => handleOpenPanel('compare')} className="text-[12px] font-medium text-accent">
-                    Compare
-                  </button>
-                </div>
-                <div className="space-y-1.5">
-                  {municipalities.map((m) => (
-                    <MunicipalityCard
-                      key={m.id}
-                      municipality={m}
-                      isSelected={state.selectedMunicipality === m.id}
-                      onSelect={(id) => dispatch({ type: 'SELECT_MUNICIPALITY', id })}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 pb-4">
-                <button
-                  onClick={() => handleOpenPanel('dashboard')}
-                  className="rounded-xl bg-white/50 py-2.5 text-center active:bg-white/70 transition-colors"
-                >
-                  <span className="text-lg">📊</span>
-                  <div className="mt-0.5 text-[12px] font-medium text-text">Dashboard</div>
-                </button>
-                <button
-                  onClick={() => setShowTour(true)}
-                  className="rounded-xl bg-white/50 py-2.5 text-center active:bg-white/70 transition-colors"
-                >
-                  <span className="text-lg">🧭</span>
-                  <div className="mt-0.5 text-[12px] font-medium text-text">Tour</div>
-                </button>
-              </div>
-            </div>
+            <HomeFeed
+              onOpenPanel={(content) => handleOpenPanel(content as Parameters<typeof handleOpenPanel>[0])}
+              onSelectMunicipality={(id) => dispatch({ type: 'SELECT_MUNICIPALITY', id })}
+              selectedMunicipality={state.selectedMunicipality}
+            />
           )}
         </BottomSheet>
       </div>
