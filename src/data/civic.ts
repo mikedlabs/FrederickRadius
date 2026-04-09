@@ -25,9 +25,10 @@ export const countyRepresentatives: Representative[] = [
 ];
 
 export const stateRepresentatives: Representative[] = [
-  { name: 'Karen Lewis Young', title: 'State Senator', level: 'state', district: 'District 3', party: 'D', sourceUrl: STATE_ROSTER_URL, verifiedDate: VERIFIED_DATE },
-  { name: 'William Folden', title: 'State Senator', level: 'state', district: 'District 4', party: 'R', sourceUrl: STATE_ROSTER_URL, verifiedDate: VERIFIED_DATE },
-  { name: 'Justin Ready', title: 'State Senator', level: 'state', district: 'District 5', party: 'R', sourceUrl: STATE_ROSTER_URL, verifiedDate: VERIFIED_DATE },
+  { name: 'Paul D. Corderman', title: 'State Senator', level: 'state', district: 'District 2', party: 'R', sourceUrl: STATE_ROSTER_URL, verifiedDate: '2026-04-09' },
+  { name: 'Karen Lewis Young', title: 'State Senator', level: 'state', district: 'District 3', party: 'D', sourceUrl: STATE_ROSTER_URL, verifiedDate: '2026-04-09' },
+  { name: 'William Folden', title: 'State Senator', level: 'state', district: 'District 4', party: 'R', sourceUrl: STATE_ROSTER_URL, verifiedDate: '2026-04-09' },
+  { name: 'Justin Ready', title: 'State Senator', level: 'state', district: 'District 5', party: 'R', sourceUrl: STATE_ROSTER_URL, verifiedDate: '2026-04-09' },
   { name: 'Christopher Eric Bouchat', title: 'Delegate', level: 'state', district: 'District 5', party: 'R', sourceUrl: STATE_ROSTER_URL, verifiedDate: VERIFIED_DATE },
   { name: 'Barrie S. Ciliberti', title: 'Delegate', level: 'state', district: 'District 4', party: 'R', sourceUrl: STATE_ROSTER_URL, verifiedDate: VERIFIED_DATE },
   { name: 'Kris Fair', title: 'Delegate', level: 'state', district: 'District 3', party: 'D', sourceUrl: STATE_ROSTER_URL, verifiedDate: VERIFIED_DATE },
