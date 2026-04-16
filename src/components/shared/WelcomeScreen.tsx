@@ -17,7 +17,7 @@ const AUDIENCES = [
     icon: '👥',
     title: 'Residents',
     desc: 'Discover local experiences and connect with your community',
-    features: ['Real-time local events', 'Civic engagement tools', 'Loyalty rewards'],
+    features: ['Real-time local events', 'Civic engagement tools', 'Neighborhood alerts'],
   },
   {
     icon: '🏪',

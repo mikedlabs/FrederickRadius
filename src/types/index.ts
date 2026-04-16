@@ -85,29 +85,6 @@ export interface SearchResult {
   boundingbox: string[];
 }
 
-export interface RewardsState {
-  points: number;
-  municipalitiesVisited: string[];
-  badges: Badge[];
-  actions: RewardAction[];
-}
-
-export interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  earned: boolean;
-  earnedAt?: string;
-}
-
-export interface RewardAction {
-  type: string;
-  points: number;
-  timestamp: string;
-  description: string;
-}
-
 export interface Meeting {
   id: string;
   title: string;
@@ -134,12 +111,11 @@ export interface AppState {
   activeLayers: string[];
   sidebarOpen: boolean;
   slidePanelOpen: boolean;
-  slidePanelContent: 'municipality' | 'search' | 'civic' | 'rewards' | 'weather' | 'water' | 'traffic' | 'reports' | 'parking' | 'compare' | 'address-intel' | 'dashboard' | null;
+  slidePanelContent: 'municipality' | 'search' | 'civic' | 'weather' | 'water' | 'traffic' | 'reports' | 'parking' | 'compare' | 'address-intel' | 'dashboard' | null;
   addressIntel?: { lat: number; lng: number; address: string };
   searchQuery: string;
   layerOpacity: Record<string, number>;
   layerOrder: string[];
-  discoverSummary: string | null;
   layerPanelOpen: boolean;
 }
 

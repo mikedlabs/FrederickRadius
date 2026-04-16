@@ -46,7 +46,6 @@ export function CommandPalette() {
       { content: 'reports', label: '311 Service Requests', icon: '📢', desc: 'SeeClickFix open issues' },
       { content: 'parking', label: 'Parking', icon: '🅿️', desc: 'ParkMobile zones and garages' },
       { content: 'civic', label: 'Civic Info', icon: '🏛️', desc: 'Meetings and representatives' },
-      { content: 'rewards', label: 'Rewards & Badges', icon: '⭐', desc: 'Your civic engagement score' },
     ];
     for (const p of panels) {
       cmds.push({

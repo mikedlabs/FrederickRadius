@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useAppState } from '../../hooks/useAppState';
-import { useRewards } from '../../hooks/useRewards';
 import { MapView } from '../map/MapView';
 import { Sidebar } from './Sidebar';
 import { SlidePanel } from './SlidePanel';
@@ -12,7 +11,6 @@ import { LayerPanel } from '../layers/LayerPanel';
 import { LiveActivityFeed } from '../shared/LiveActivityFeed';
 import { WelcomeScreen } from '../shared/WelcomeScreen';
 import { GuidedTour } from '../shared/GuidedTour';
-import { Confetti } from '../shared/Confetti';
 import { SearchBar } from './SearchBar';
 import { MunicipalityCard } from '../municipalities/MunicipalityCard';
 import { municipalities } from '../../data/municipalities';
@@ -25,7 +23,6 @@ import { ReportsPanel } from '../data-layers/ReportsPanel';
 import { ParkingPanel } from '../data-layers/ParkingPanel';
 import { MeetingCalendar } from '../civic/MeetingCalendar';
 import { RepresentativesPanel } from '../civic/RepresentativeCard';
-import { RewardsPanel } from '../rewards/RewardsPanel';
 import { MunicipalityProfile } from '../municipalities/MunicipalityProfile';
 import { MunicipalityCompare } from '../municipalities/MunicipalityCompare';
 import { AddressIntelligencePanel } from '../shared/AddressIntelligencePanel';
@@ -49,28 +46,22 @@ function useIsMobile() {
 
 export function AppShell() {
   const { state, dispatch } = useAppState();
-  const { rewards, visitMunicipality, earnBadge } = useRewards();
   const isMobile = useIsMobile();
   const [showWelcome, setShowWelcome] = useState(() => !sessionStorage.getItem('fr-welcomed'));
   const [showTour, setShowTour] = useState(false);
-  const [confettiTrigger] = useState(false);
   const [bottomSheetSnap, setBottomSheetSnap] = useState<SnapPoint>('peek');
   const [radiusCenter, setRadiusCenter] = useState<[number, number] | null>(null);
 
-  const handleOpenPanel = (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => {
+  const handleOpenPanel = (content: 'weather' | 'water' | 'civic' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => {
     dispatch({ type: 'OPEN_PANEL', content });
     if (isMobile) setBottomSheetSnap('full');
-    if (content === 'weather') earnBadge('weather-watcher');
-    if (content === 'water') earnBadge('water-monitor');
-    if (content === 'civic') earnBadge('civic-minded');
   };
 
   useEffect(() => {
-    if (state.selectedMunicipality) {
-      visitMunicipality(state.selectedMunicipality);
-      if (isMobile) setBottomSheetSnap('full');
+    if (state.selectedMunicipality && isMobile) {
+      setBottomSheetSnap('full');
     }
-  }, [state.selectedMunicipality, visitMunicipality, isMobile]);
+  }, [state.selectedMunicipality, isMobile]);
 
   // Enter key skips welcome
   useEffect(() => {
@@ -91,7 +82,6 @@ export function AppShell() {
     return (
       <div className="h-full w-full relative">
         <CommandPalette />
-        <Confetti trigger={confettiTrigger} />
 
         {/* Full-screen Map */}
         <div className="h-full w-full">
@@ -135,7 +125,7 @@ export function AppShell() {
                 Back
               </button>
               <ErrorBoundary>
-                <MobilePanelContent type={state.slidePanelContent} rewards={rewards} addressIntel={state.addressIntel} />
+                <MobilePanelContent type={state.slidePanelContent} addressIntel={state.addressIntel} />
               </ErrorBoundary>
             </div>
           ) : (
@@ -191,7 +181,6 @@ export function AppShell() {
   return (
     <div className="flex h-full">
       <CommandPalette />
-      <Confetti trigger={confettiTrigger} />
 
       {/* Mobile sidebar toggle (hidden on desktop, but kept for tablet) */}
       {!state.sidebarOpen && (
@@ -209,7 +198,6 @@ export function AppShell() {
       {state.sidebarOpen && (
         <Sidebar
           onOpenPanel={handleOpenPanel}
-          points={rewards.points}
           onStartTour={() => setShowTour(true)}
         />
       )}
@@ -253,15 +241,15 @@ export function AppShell() {
       {/* Slide Panel (desktop only) */}
       <AnimatePresence>
         {state.slidePanelOpen && (
-          <SlidePanel rewards={rewards} />
+          <SlidePanel />
         )}
       </AnimatePresence>
     </div>
   );
 }
 
-function MobilePanelContent({ type, rewards, addressIntel }: {
-  type: string; rewards: import('../../types').RewardsState;
+function MobilePanelContent({ type, addressIntel }: {
+  type: string;
   addressIntel?: { lat: number; lng: number; address: string };
 }) {
   switch (type) {
@@ -273,7 +261,6 @@ function MobilePanelContent({ type, rewards, addressIntel }: {
     case 'parking': return <ParkingPanel />;
     case 'compare': return <MunicipalityCompare />;
     case 'dashboard': return <CountyDashboard />;
-    case 'rewards': return <RewardsPanel rewards={rewards} />;
     case 'civic': return (
       <div className="space-y-6">
         <div><h3 className="mb-3 text-sm font-semibold text-text">Upcoming Meetings</h3><MeetingCalendar /></div>

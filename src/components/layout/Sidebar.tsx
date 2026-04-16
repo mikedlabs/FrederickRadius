@@ -5,12 +5,11 @@ import { MapControls } from '../map/MapControls';
 import { SearchBar } from './SearchBar';
 
 interface Props {
-  onOpenPanel: (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => void;
-  points: number;
+  onOpenPanel: (content: 'weather' | 'water' | 'civic' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => void;
   onStartTour?: () => void;
 }
 
-export function Sidebar({ onOpenPanel, points, onStartTour }: Props) {
+export function Sidebar({ onOpenPanel, onStartTour }: Props) {
   const { state, dispatch } = useAppState();
 
   return (
@@ -32,13 +31,6 @@ export function Sidebar({ onOpenPanel, points, onStartTour }: Props) {
               <p className="text-xs text-text-muted">Frederick County, Maryland</p>
             </div>
           </div>
-          <button
-            onClick={() => onOpenPanel('rewards')}
-            className="flex items-center gap-1.5 rounded-full bg-bg-surface border border-border px-2.5 py-1 text-xs font-medium text-accent hover:bg-bg-hover transition-colors"
-          >
-            <span>⭐</span>
-            {points} pts
-          </button>
         </div>
         <div className="mt-3">
           <SearchBar />
@@ -56,7 +48,6 @@ export function Sidebar({ onOpenPanel, points, onStartTour }: Props) {
           <QuickAction icon="🅿️" label="Parking" onClick={() => onOpenPanel('parking')} />
           <QuickAction icon="⚔️" label="Compare" onClick={() => onOpenPanel('compare')} />
           <QuickAction icon="📊" label="Dashboard" onClick={() => onOpenPanel('dashboard')} />
-          <QuickAction icon="⭐" label="Rewards" onClick={() => onOpenPanel('rewards')} />
         </div>
         <div className="mt-1.5 grid grid-cols-1">
           <QuickAction icon="📑" label="Map Layers" onClick={() => {

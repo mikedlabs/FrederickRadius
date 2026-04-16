@@ -12,10 +12,8 @@ import { CountyDashboard } from '../data-layers/CountyDashboard';
 import { ParkingPanel } from '../data-layers/ParkingPanel';
 import { MeetingCalendar } from '../civic/MeetingCalendar';
 import { RepresentativesPanel } from '../civic/RepresentativeCard';
-import { RewardsPanel } from '../rewards/RewardsPanel';
 import { AddressIntelligencePanel } from '../shared/AddressIntelligencePanel';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
-import type { RewardsState } from '../../types';
 
 const PANEL_TITLES: Record<string, string> = {
   municipality: 'Municipality',
@@ -25,18 +23,13 @@ const PANEL_TITLES: Record<string, string> = {
   reports: '311 Service Requests',
   parking: 'Parking',
   civic: 'Civic',
-  rewards: 'Rewards',
   compare: 'Compare Municipalities',
   dashboard: 'County Dashboard',
   'address-intel': 'Address Intelligence',
   search: 'Search Results',
 };
 
-interface Props {
-  rewards: RewardsState;
-}
-
-export function SlidePanel({ rewards }: Props) {
+export function SlidePanel() {
   const { state, dispatch } = useAppState();
 
   if (!state.slidePanelOpen || !state.slidePanelContent) return null;
@@ -64,14 +57,14 @@ export function SlidePanel({ rewards }: Props) {
 
       <div className="flex-1 overflow-y-auto p-4">
         <ErrorBoundary>
-          <PanelContent type={state.slidePanelContent} rewards={rewards} />
+          <PanelContent type={state.slidePanelContent} />
         </ErrorBoundary>
       </div>
     </motion.div>
   );
 }
 
-function PanelContent({ type, rewards }: { type: string; rewards: RewardsState }): ReactNode {
+function PanelContent({ type }: { type: string }): ReactNode {
   const { state } = useAppState();
 
   switch (type) {
@@ -93,8 +86,6 @@ function PanelContent({ type, rewards }: { type: string; rewards: RewardsState }
       return <MunicipalityCompare />;
     case 'dashboard':
       return <CountyDashboard />;
-    case 'rewards':
-      return <RewardsPanel rewards={rewards} />;
     case 'address-intel':
       return state.addressIntel ? (
         <AddressIntelligencePanel
