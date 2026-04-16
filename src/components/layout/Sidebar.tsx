@@ -3,6 +3,7 @@ import { municipalities } from '../../data/municipalities';
 import { MunicipalityCard } from '../municipalities/MunicipalityCard';
 import { MapControls } from '../map/MapControls';
 import { SearchBar } from './SearchBar';
+import { ThemeToggle } from '../shared/ThemeToggle';
 
 interface Props {
   onOpenPanel: (content: 'weather' | 'water' | 'civic' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => void;
@@ -31,6 +32,7 @@ export function Sidebar({ onOpenPanel, onStartTour }: Props) {
               <p className="mt-1 text-xs text-text-muted">Frederick County, Maryland</p>
             </div>
           </div>
+          <ThemeToggle />
         </div>
         <div className="mt-3">
           <SearchBar />

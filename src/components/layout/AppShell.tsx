@@ -30,6 +30,7 @@ import { CountyDashboard } from '../data-layers/CountyDashboard';
 import { WhatsHappeningNow } from '../shared/WhatsHappeningNow';
 import { WidgetStrip } from '../shared/WidgetStrip';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
+import { ThemeToggle } from '../shared/ThemeToggle';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(
@@ -172,6 +173,11 @@ export function AppShell() {
               >
                 🧭 Take a Tour
               </button>
+
+              <div className="flex items-center justify-between pt-4 border-t border-border">
+                <span className="text-[11px] uppercase tracking-wider text-text-muted">Appearance</span>
+                <ThemeToggle />
+              </div>
             </div>
           )}
         </BottomSheet>
