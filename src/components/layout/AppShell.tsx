@@ -1,7 +1,18 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  BarChart3,
+  ChevronRight,
+  Compass,
+  Crosshair,
+  Layers,
+  Menu,
+  Search,
+} from 'lucide-react';
 import { useAppState } from '../../hooks/useAppState';
-import { useRewards } from '../../hooks/useRewards';
+import { useAppRoute, useClosePanel, routes } from '../../hooks/useAppRoute';
 import { MapView } from '../map/MapView';
 import { Sidebar } from './Sidebar';
 import { SlidePanel } from './SlidePanel';
@@ -12,7 +23,6 @@ import { LayerPanel } from '../layers/LayerPanel';
 import { LiveActivityFeed } from '../shared/LiveActivityFeed';
 import { WelcomeScreen } from '../shared/WelcomeScreen';
 import { GuidedTour } from '../shared/GuidedTour';
-import { Confetti } from '../shared/Confetti';
 import { SearchBar } from './SearchBar';
 import { MunicipalityCard } from '../municipalities/MunicipalityCard';
 import { municipalities } from '../../data/municipalities';
@@ -25,7 +35,6 @@ import { ReportsPanel } from '../data-layers/ReportsPanel';
 import { ParkingPanel } from '../data-layers/ParkingPanel';
 import { MeetingCalendar } from '../civic/MeetingCalendar';
 import { RepresentativesPanel } from '../civic/RepresentativeCard';
-import { RewardsPanel } from '../rewards/RewardsPanel';
 import { MunicipalityProfile } from '../municipalities/MunicipalityProfile';
 import { MunicipalityCompare } from '../municipalities/MunicipalityCompare';
 import { AddressIntelligencePanel } from '../shared/AddressIntelligencePanel';
@@ -33,6 +42,8 @@ import { CountyDashboard } from '../data-layers/CountyDashboard';
 import { WhatsHappeningNow } from '../shared/WhatsHappeningNow';
 import { WidgetStrip } from '../shared/WidgetStrip';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
+import { ThemeToggle } from '../shared/ThemeToggle';
+import type { AppRoute } from '../../hooks/useAppRoute';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(
@@ -49,28 +60,19 @@ function useIsMobile() {
 
 export function AppShell() {
   const { state, dispatch } = useAppState();
-  const { rewards, visitMunicipality, earnBadge } = useRewards();
+  const route = useAppRoute();
+  const navigate = useNavigate();
+  const closePanel = useClosePanel();
   const isMobile = useIsMobile();
   const [showWelcome, setShowWelcome] = useState(() => !sessionStorage.getItem('fr-welcomed'));
   const [showTour, setShowTour] = useState(false);
-  const [confettiTrigger] = useState(false);
   const [bottomSheetSnap, setBottomSheetSnap] = useState<SnapPoint>('peek');
   const [radiusCenter, setRadiusCenter] = useState<[number, number] | null>(null);
 
-  const handleOpenPanel = (content: 'weather' | 'water' | 'civic' | 'rewards' | 'traffic' | 'reports' | 'parking' | 'compare' | 'dashboard') => {
-    dispatch({ type: 'OPEN_PANEL', content });
-    if (isMobile) setBottomSheetSnap('full');
-    if (content === 'weather') earnBadge('weather-watcher');
-    if (content === 'water') earnBadge('water-monitor');
-    if (content === 'civic') earnBadge('civic-minded');
-  };
-
+  // When a panel route opens on mobile, expand the bottom sheet.
   useEffect(() => {
-    if (state.selectedMunicipality) {
-      visitMunicipality(state.selectedMunicipality);
-      if (isMobile) setBottomSheetSnap('full');
-    }
-  }, [state.selectedMunicipality, visitMunicipality, isMobile]);
+    if (route.panel && isMobile) setBottomSheetSnap('full');
+  }, [route.panel, isMobile]);
 
   // Enter key skips welcome
   useEffect(() => {
@@ -91,22 +93,25 @@ export function AppShell() {
     return (
       <div className="h-full w-full relative">
         <CommandPalette />
-        <Confetti trigger={confettiTrigger} />
 
         {/* Full-screen Map */}
         <div className="h-full w-full">
-          <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
+          <ErrorBoundary fallback={<MapErrorFallback />}>
+            <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
+          </ErrorBoundary>
           <CountyPulse />
           {showTour && <GuidedTour onClose={() => setShowTour(false)} />}
 
           {/* Radius Explorer button */}
           <button
             onClick={() => setRadiusCenter(radiusCenter ? null : [-77.4105, 39.4143])}
-            className={`absolute top-14 right-3 z-10 glass rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+            className={`absolute top-14 right-3 z-10 glass rounded-full px-3 py-1.5 inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
               radiusCenter ? 'text-accent' : 'text-text-secondary hover:text-text'
             }`}
+            aria-label="Toggle radius explorer"
           >
-            ◎ Radius
+            <Crosshair className="h-3.5 w-3.5" strokeWidth={2} />
+            Radius
           </button>
         </div>
 
@@ -122,38 +127,39 @@ export function AppShell() {
           }
         >
           {/* Sheet scrollable content */}
-          {state.slidePanelContent ? (
+          {route.panel ? (
             <div>
-              {/* Back button */}
               <button
-                onClick={() => { dispatch({ type: 'CLOSE_PANEL' }); setBottomSheetSnap('half'); }}
-                className="flex items-center gap-1.5 text-xs text-accent mb-3 py-1"
+                onClick={() => { closePanel(); setBottomSheetSnap('half'); }}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-accent mb-3 py-1 hover:text-accent-hover transition-colors"
               >
-                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
+                <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
                 Back
               </button>
               <ErrorBoundary>
-                <MobilePanelContent type={state.slidePanelContent} rewards={rewards} addressIntel={state.addressIntel} />
+                <PanelContent route={route} />
               </ErrorBoundary>
             </div>
           ) : (
             <div className="space-y-4">
-              {/* What's Happening Now — time-aware smart feed */}
               <WhatsHappeningNow />
 
               {/* County stats quick access */}
               <button
-                onClick={() => handleOpenPanel('dashboard' as 'weather')}
-                className="w-full rounded-xl bg-bg-surface border border-border p-3 text-left hover:bg-bg-hover transition-colors"
+                onClick={() => navigate(routes.data('dashboard'))}
+                className="w-full rounded-xl border border-border bg-bg-elevated p-3 text-left shadow-[var(--shadow-surface-1)] hover:bg-bg-hover transition-colors"
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-medium text-text">County Dashboard</div>
-                    <div className="text-[10px] text-text-muted">305K residents · 4,500+ businesses · $560M impact</div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-accent-subtle text-accent">
+                      <BarChart3 className="h-4 w-4" strokeWidth={1.75} />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-text">County Dashboard</div>
+                      <div className="text-[11px] text-text-muted truncate">305K residents · 4,500+ businesses · $560M impact</div>
+                    </div>
                   </div>
-                  <span className="text-lg">📊</span>
+                  <ChevronRight className="h-4 w-4 flex-shrink-0 text-text-muted" strokeWidth={2} />
                 </div>
               </button>
 
@@ -162,7 +168,7 @@ export function AppShell() {
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Municipalities
                 </h3>
-                <button onClick={() => handleOpenPanel('compare')} className="text-[10px] text-accent">
+                <button onClick={() => navigate(routes.data('compare'))} className="text-xs font-medium text-accent">
                   Compare
                 </button>
               </div>
@@ -170,16 +176,22 @@ export function AppShell() {
                 <MunicipalityCard
                   key={m.id}
                   municipality={m}
-                  isSelected={state.selectedMunicipality === m.id}
-                  onSelect={(id) => dispatch({ type: 'SELECT_MUNICIPALITY', id })}
+                  isSelected={route.municipalitySlug === m.id}
+                  onSelect={(id) => navigate(routes.municipality(id))}
                 />
               ))}
               <button
                 onClick={() => setShowTour(true)}
-                className="w-full rounded-lg bg-gradient-to-r from-accent/10 to-success/10 border border-accent/20 px-3 py-2.5 text-xs font-medium text-accent"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-bg-elevated px-3 py-2.5 text-xs font-medium text-text hover:bg-bg-hover transition-colors"
               >
-                🧭 Take a Tour
+                <Compass className="h-3.5 w-3.5 text-accent" strokeWidth={2} />
+                Take a tour of Frederick County
               </button>
+
+              <div className="flex items-center justify-between pt-4 border-t border-border">
+                <span className="text-[11px] uppercase tracking-wider text-text-muted">Appearance</span>
+                <ThemeToggle />
+              </div>
             </div>
           )}
         </BottomSheet>
@@ -188,101 +200,122 @@ export function AppShell() {
   }
 
   // ── DESKTOP LAYOUT ──
+  const slidePanelOpen = route.panel !== null;
   return (
     <div className="flex h-full">
       <CommandPalette />
-      <Confetti trigger={confettiTrigger} />
 
-      {/* Mobile sidebar toggle (hidden on desktop, but kept for tablet) */}
       {!state.sidebarOpen && (
         <button
           onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
-          className="fixed left-3 top-3 z-50 glass rounded-lg p-2.5 shadow-lg hover:bg-bg-hover transition-colors"
+          className="fixed left-3 top-3 z-50 glass rounded-lg p-2.5 shadow-[var(--shadow-surface-2)] hover:bg-bg-hover transition-colors"
+          aria-label="Open sidebar"
         >
-          <svg className="h-5 w-5 text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          <Menu className="h-5 w-5 text-text" strokeWidth={2} />
         </button>
       )}
 
-      {/* Sidebar */}
       {state.sidebarOpen && (
-        <Sidebar
-          onOpenPanel={handleOpenPanel}
-          points={rewards.points}
-          onStartTour={() => setShowTour(true)}
-        />
+        <Sidebar onStartTour={() => setShowTour(true)} />
       )}
 
-      {/* Map */}
       <div className="relative flex-1 min-w-0">
-        <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
+        <ErrorBoundary fallback={<MapErrorFallback />}>
+          <MapView radiusCenter={radiusCenter} onCloseRadius={() => setRadiusCenter(null)} />
+        </ErrorBoundary>
         <CountyPulse />
         <LiveActivityFeed />
         {showTour && <GuidedTour onClose={() => setShowTour(false)} />}
 
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
-          <div className="glass rounded-full px-3 py-1.5 flex items-center gap-2 text-[10px] text-text-muted">
-            <kbd className="rounded bg-bg-surface border border-border px-1 py-0.5 text-[9px]">⌘K</kbd>
+          <div className="glass rounded-full px-3 py-1.5 flex items-center gap-2 text-[11px] text-text-muted">
+            <Search className="h-3 w-3" strokeWidth={2} />
             <span>Search</span>
+            <kbd className="rounded bg-bg-surface border border-border px-1 py-0.5 text-[9px] font-sans">⌘K</kbd>
           </div>
           <button
             onClick={() => dispatch({ type: 'TOGGLE_LAYER_PANEL' })}
-            className={`glass rounded-full px-3 py-1.5 text-[10px] transition-colors ${
+            className={`glass rounded-full px-3 py-1.5 inline-flex items-center gap-1.5 text-[11px] transition-colors ${
               state.layerPanelOpen ? 'text-accent' : 'text-text-muted hover:text-text'
             }`}
           >
-            ◆ Layers
+            <Layers className="h-3 w-3" strokeWidth={2} />
+            Layers
           </button>
           <button
             onClick={() => setShowTour(true)}
-            className="glass rounded-full px-3 py-1.5 text-[10px] text-text-muted hover:text-text transition-colors"
+            className="glass rounded-full px-3 py-1.5 inline-flex items-center gap-1.5 text-[11px] text-text-muted hover:text-text transition-colors"
           >
-            🧭 Tour
+            <Compass className="h-3 w-3" strokeWidth={2} />
+            Tour
           </button>
         </div>
       </div>
 
-      {/* Layer Panel (desktop only) */}
       <AnimatePresence>
-        {state.layerPanelOpen && !state.slidePanelOpen && (
-          <LayerPanel />
-        )}
+        {state.layerPanelOpen && !slidePanelOpen && <LayerPanel />}
       </AnimatePresence>
 
-      {/* Slide Panel (desktop only) */}
       <AnimatePresence>
-        {state.slidePanelOpen && (
-          <SlidePanel rewards={rewards} />
-        )}
+        {slidePanelOpen && <SlidePanel route={route} />}
       </AnimatePresence>
     </div>
   );
 }
 
-function MobilePanelContent({ type, rewards, addressIntel }: {
-  type: string; rewards: import('../../types').RewardsState;
-  addressIntel?: { lat: number; lng: number; address: string };
-}) {
-  switch (type) {
-    case 'municipality': return <MunicipalityProfile />;
-    case 'weather': return <WeatherPanel />;
-    case 'water': return <WaterLevelsPanel />;
-    case 'traffic': return <TrafficPanel />;
-    case 'reports': return <ReportsPanel />;
-    case 'parking': return <ParkingPanel />;
-    case 'compare': return <MunicipalityCompare />;
-    case 'dashboard': return <CountyDashboard />;
-    case 'rewards': return <RewardsPanel rewards={rewards} />;
-    case 'civic': return (
-      <div className="space-y-6">
-        <div><h3 className="mb-3 text-sm font-semibold text-text">Upcoming Meetings</h3><MeetingCalendar /></div>
-        <div><h3 className="mb-3 text-sm font-semibold text-text">Representatives</h3><RepresentativesPanel /></div>
+function MapErrorFallback() {
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-bg-surface p-6 text-center">
+      <div className="max-w-sm">
+        <div className="text-sm font-medium text-text">The map failed to load</div>
+        <p className="mt-1 text-xs text-text-muted">
+          This usually means the Mapbox token is missing or rate-limited. Check your network and try reloading.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white hover:bg-accent-hover"
+        >
+          Reload
+        </button>
       </div>
-    );
-    case 'address-intel': return addressIntel ? (
-      <AddressIntelligencePanel lat={addressIntel.lat} lng={addressIntel.lng} address={addressIntel.address} />
-    ) : null;
-    default: return null;
+    </div>
+  );
+}
+
+export function PanelContent({ route }: { route: AppRoute }) {
+  switch (route.panel) {
+    case 'municipality':
+      return <MunicipalityProfile slug={route.municipalitySlug} />;
+    case 'weather':
+      return <WeatherPanel />;
+    case 'water':
+      return <WaterLevelsPanel />;
+    case 'traffic':
+      return <TrafficPanel />;
+    case 'reports':
+      return <ReportsPanel />;
+    case 'parking':
+      return <ParkingPanel />;
+    case 'compare':
+      return <MunicipalityCompare />;
+    case 'dashboard':
+      return <CountyDashboard />;
+    case 'civic':
+      return (
+        <div className="space-y-6">
+          <div><h3 className="mb-3 text-sm font-semibold text-text">Upcoming Meetings</h3><MeetingCalendar /></div>
+          <div><h3 className="mb-3 text-sm font-semibold text-text">Representatives</h3><RepresentativesPanel /></div>
+        </div>
+      );
+    case 'address-intel':
+      return route.address ? (
+        <AddressIntelligencePanel
+          lat={route.address.lat}
+          lng={route.address.lng}
+          address={route.address.addressText}
+        />
+      ) : null;
+    default:
+      return null;
   }
 }

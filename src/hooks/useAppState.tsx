@@ -8,48 +8,34 @@ interface AppContextType {
   dispatch: React.Dispatch<AppAction>;
 }
 
+/**
+ * App-wide state is deliberately narrow. Panel/navigation state lives in the
+ * URL via useAppRoute — this reducer only owns transient UI bits (sidebar,
+ * layer panel, layer toggles) that are not meaningful to share or deep-link.
+ */
 type AppAction =
-  | { type: 'SELECT_MUNICIPALITY'; id: string | null }
   | { type: 'TOGGLE_SIDEBAR' }
-  | { type: 'OPEN_PANEL'; content: AppState['slidePanelContent'] }
-  | { type: 'CLOSE_PANEL' }
   | { type: 'TOGGLE_LAYER'; layerId: string }
   | { type: 'SET_SEARCH'; query: string }
-  | { type: 'ADDRESS_INTEL'; lat: number; lng: number; address: string }
   | { type: 'SET_LAYER_OPACITY'; layerId: string; opacity: number }
   | { type: 'SET_LAYER_ORDER'; order: string[] }
-  | { type: 'DISCOVER'; layerIds: string[]; opacities: Record<string, number>; summary: string }
+  | { type: 'SET_LAYERS'; ids: string[]; opacities?: Record<string, number> }
   | { type: 'CLEAR_LAYERS' }
   | { type: 'TOGGLE_LAYER_PANEL' };
 
 const initialState: AppState = {
-  selectedMunicipality: null,
   activeLayers: [],
   sidebarOpen: true,
-  slidePanelOpen: false,
-  slidePanelContent: null,
   searchQuery: '',
   layerOpacity: {},
   layerOrder: [],
-  discoverSummary: null,
   layerPanelOpen: false,
 };
 
 function reducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
-    case 'SELECT_MUNICIPALITY':
-      return {
-        ...state,
-        selectedMunicipality: action.id,
-        slidePanelOpen: action.id !== null,
-        slidePanelContent: action.id !== null ? 'municipality' : null,
-      };
     case 'TOGGLE_SIDEBAR':
       return { ...state, sidebarOpen: !state.sidebarOpen };
-    case 'OPEN_PANEL':
-      return { ...state, slidePanelOpen: true, slidePanelContent: action.content };
-    case 'CLOSE_PANEL':
-      return { ...state, slidePanelOpen: false, slidePanelContent: null, selectedMunicipality: null };
     case 'TOGGLE_LAYER': {
       const isActive = state.activeLayers.includes(action.layerId);
       const active = isActive
@@ -58,33 +44,25 @@ function reducer(state: AppState, action: AppAction): AppState {
       const order = isActive
         ? state.layerOrder.filter((id) => id !== action.layerId)
         : [action.layerId, ...state.layerOrder];
-      return { ...state, activeLayers: active, layerOrder: order, discoverSummary: null };
+      return { ...state, activeLayers: active, layerOrder: order };
     }
     case 'SET_LAYER_OPACITY':
       return { ...state, layerOpacity: { ...state.layerOpacity, [action.layerId]: action.opacity } };
     case 'SET_LAYER_ORDER':
       return { ...state, layerOrder: action.order };
-    case 'DISCOVER':
+    case 'SET_LAYERS':
       return {
         ...state,
-        activeLayers: action.layerIds,
-        layerOrder: action.layerIds,
-        layerOpacity: action.opacities,
-        discoverSummary: action.summary,
+        activeLayers: [...action.ids],
+        layerOrder: [...action.ids],
+        layerOpacity: action.opacities ?? {},
       };
     case 'CLEAR_LAYERS':
-      return { ...state, activeLayers: [], layerOrder: [], layerOpacity: {}, discoverSummary: null };
+      return { ...state, activeLayers: [], layerOrder: [], layerOpacity: {} };
     case 'TOGGLE_LAYER_PANEL':
       return { ...state, layerPanelOpen: !state.layerPanelOpen };
     case 'SET_SEARCH':
       return { ...state, searchQuery: action.query };
-    case 'ADDRESS_INTEL':
-      return {
-        ...state,
-        slidePanelOpen: true,
-        slidePanelContent: 'address-intel',
-        addressIntel: { lat: action.lat, lng: action.lng, address: action.address },
-      };
     default:
       return state;
   }
