@@ -19,6 +19,7 @@ type AppAction =
   | { type: 'SET_SEARCH'; query: string }
   | { type: 'SET_LAYER_OPACITY'; layerId: string; opacity: number }
   | { type: 'SET_LAYER_ORDER'; order: string[] }
+  | { type: 'SET_LAYERS'; ids: string[]; opacities?: Record<string, number> }
   | { type: 'CLEAR_LAYERS' }
   | { type: 'TOGGLE_LAYER_PANEL' };
 
@@ -49,6 +50,13 @@ function reducer(state: AppState, action: AppAction): AppState {
       return { ...state, layerOpacity: { ...state.layerOpacity, [action.layerId]: action.opacity } };
     case 'SET_LAYER_ORDER':
       return { ...state, layerOrder: action.order };
+    case 'SET_LAYERS':
+      return {
+        ...state,
+        activeLayers: [...action.ids],
+        layerOrder: [...action.ids],
+        layerOpacity: action.opacities ?? {},
+      };
     case 'CLEAR_LAYERS':
       return { ...state, activeLayers: [], layerOrder: [], layerOpacity: {} };
     case 'TOGGLE_LAYER_PANEL':
